@@ -30,12 +30,10 @@
 #include <linux/debugfs.h>
 #include <linux/uaccess.h>
 
-//BEGIN<20160601>wangyanhui add for front flash	
 #if defined(CONFIG_LEDS_MSM_GPIO_DUAL_REAR_FLASH_AND_FRONT_FLASH)	
 #include <linux/gpio.h>
 #include <linux/of_gpio.h>
 #endif
-//END<20160601>wangyanhui add for front flash	
 #define FLASH_LED_PERIPHERAL_SUBTYPE(base)			(base + 0x05)
 #define FLASH_SAFETY_TIMER(base)				(base + 0x40)
 #define FLASH_MAX_CURRENT(base)					(base + 0x41)
@@ -144,11 +142,9 @@ enum flash_led_id {
 	FLASH_LED_0 = 0,
 	FLASH_LED_1,
 	FLASH_LED_SWITCH,
-//BEGIN<20160601>wangyanhui add for front flash	
 #if defined(CONFIG_LEDS_MSM_GPIO_DUAL_REAR_FLASH_AND_FRONT_FLASH)	
 	FLASH_LED_FRONT,
 #endif
-//END<20160601>wangyanhui add for front flash
 };
 
 enum flash_led_type {
@@ -230,12 +226,10 @@ struct flash_led_platform_data {
 	bool				mask3_en;
 	bool				follow_rb_disable;
 	bool				die_current_derate_en;
-//BEGIN<20160601>wangyanhui add for front flash
 #if defined(CONFIG_LEDS_MSM_GPIO_DUAL_REAR_FLASH_AND_FRONT_FLASH)
 	unsigned front_flash_gpio_mode;
 	unsigned front_flash_gpio_en;	
 #endif
-//END<20160601>wangyanhui add for front flash
 };
 
 struct qpnp_flash_led_buffer {
@@ -1265,7 +1259,6 @@ static void qpnp_flash_led_work(struct work_struct *work)
 	mutex_lock(&led->flash_led_lock);
 	/* Local lock is to synchronize for one led instance */
 
-//BEGIN<20160601>wangyanhui add for front flash
 #if defined(CONFIG_LEDS_MSM_GPIO_DUAL_REAR_FLASH_AND_FRONT_FLASH)
 	if (flash_node->id == FLASH_LED_FRONT) 
 	{
@@ -1298,17 +1291,14 @@ static void qpnp_flash_led_work(struct work_struct *work)
 		return;
 	}
 #endif
-//END<20160601>wangyanhui add for front flash
 	if (!brightness)
 		goto turn_off;
 
-//BEGIN<20160525><modify for front camera>xiongdajun
 	if (led->open_fault) {
 		dev_err(&led->spmi_dev->dev, "Open fault detected\n");
 		mutex_unlock(&led->flash_led_lock);
 		return;
 	}
-//End<20160525><modify for front camera>xiongdajun
 
 	if (!flash_node->flash_on && flash_node->num_regulators > 0) {
 		rc = flash_regulator_enable(led, flash_node, true);
@@ -1617,7 +1607,6 @@ static void qpnp_flash_led_work(struct work_struct *work)
 					if(flash_node->prgm_current2)
 					    flash_node->prgm_current2 = 750;
 		    #endif
-		    //jiangwei end                    //END xiongdajun modify flash current
 			val = (u8)(flash_node->prgm_current2 *
 				FLASH_MAX_LEVEL / flash_node->max_current);
 			rc = qpnp_led_masked_write(led->spmi_dev,
@@ -2497,7 +2486,6 @@ static int qpnp_flash_led_parse_common_dt(
 			return PTR_ERR(led->gpio_state_suspend);
 		}
 	}
-//BEGIN<20160601>wangyanhui add for front flash
 #if defined(CONFIG_LEDS_MSM_GPIO_DUAL_REAR_FLASH_AND_FRONT_FLASH)
 	led->pdata->front_flash_gpio_mode = of_get_named_gpio(node,
 			"qcom,front_flash_gpio_mode", 0);
@@ -2540,7 +2528,6 @@ static int qpnp_flash_led_parse_common_dt(
 		gpio_set_value(led->pdata->front_flash_gpio_en, 0);
 	}
 #endif
-//END<20160601>wangyanhui add for front flash
 
 	return 0;
 }

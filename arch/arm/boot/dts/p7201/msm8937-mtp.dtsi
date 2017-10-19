@@ -49,7 +49,6 @@
 			linux,input-type = <1>;
 			linux,code = <0x2fe>;
 			debounce-interval = <15>;
-		};*/ //wangyanhui delete camera keys
 
 		vol_up {
 			label = "volume_up";
@@ -58,7 +57,6 @@
 			linux,code = <115>;
 			debounce-interval = <15>;
 		};
-		home { //wangyanhui add home key 
 			label = "home";
 			gpios = <&tlmm 128 0x1>;
 			linux,input-type = <1>;
@@ -68,7 +66,6 @@
 		};
 	};
 
-	//wangyanhui delete hbtp
 	/*hbtp {
 		compatible = "qcom,hbtp-input";
 		vcc_dig-supply = <&pm8937_l5>;
@@ -77,7 +74,6 @@
 		qcom,dig-vtg-max = <1800000>;
 	};*/
 
-	//wangyanhui add hall ic
 	hall-ic{//yangliang add for hall sensor;20150902
 		compatible = "hall-switch";
 		//pinctrl-names = "default";
@@ -113,7 +109,6 @@
 
 &pmi_haptic{
 	qcom,wave-play-rate-us = <4165>;
-	qcom,actuator-type = "erm"; //vib use erm mode  //wangyanhui
 	/*qcom,actuator-type = "lra";
 	qcom,lra-auto-res-mode="qwd";
 	qcom,lra-high-z="opt1";
@@ -121,12 +116,10 @@
 	qcom,correct-lra-drive-freq;*/
 	qcom,misc-trim-error-rc19p2-clk-reg-present;
 };
-//wangyanhui add for front flightlight start 
 &flash_led{
 	qcom,front_flash_gpio_mode=<&tlmm 12 0x00>;
 	qcom,front_flash_gpio_en=<&tlmm 13 0x00>;
 };
-//wangyanhui add for front flightlight end
 
 //&spi_3 { /* BLSP1 QUP3 */  //delete spi3
 	/*maxim_sti@0 {
@@ -256,7 +249,6 @@
 			focaltech,ignore-id-check;
 		};
 };
-//wangyanhui delete i2c5 for nfc 
 //&i2c_5 { /* BLSP2 QUP1 */
 	/*nq@28 {
 		compatible = "qcom,nq-nci";
@@ -326,7 +318,6 @@
 		1 &intc 0 221 0
 		2 &tlmm 67 0>;
 	interrupt-names = "hc_irq", "pwr_irq", "status_irq";
-	cd-gpios = <&tlmm 67 0x0>;//wangyanhui for eint status 67 0x1
 
 	qcom,clk-rates = <400000 20000000 25000000 50000000 100000000
 								200000000>;
@@ -358,7 +349,6 @@
 	hw-config = "single_dsi";
 };
 
- //wangyanhui delete org lcm config and add new lcd
 /*
 &mdss_dsi0 {
 	qcom,dsi-pref-prim-pan = <&dsi_truly_1080_vid>;
@@ -406,7 +396,6 @@
 */
 
 &mdss_dsi0 {
-	qcom,dsi-pref-prim-pan = <&dsi_nt35595_sharp_1080p_cmd>; //LINE<20160725><only one lcd as cmd mode>wangyanhui add
 	pinctrl-names = "mdss_default", "mdss_sleep";
 	pinctrl-0 = <&mdss_dsi_active &mdss_te_active>;
 	pinctrl-1 = <&mdss_dsi_suspend &mdss_te_suspend>;
@@ -417,12 +406,10 @@
 	qcom,platform-bklight-en-gpio = <&tlmm 98 0>;
 };
 
-&dsi_nt35595_sharp_1080p_cmd { //LINE<20160725><only one lcd as cmd mode>wangyanhui add
 	qcom,panel-supply-entries = <&dsi_panel_pwr_supply>;
 	//qcom,mdss-dsi-pan-enable-dynamic-fps;
 	//qcom,mdss-dsi-pan-fps-update = "dfps_immediate_porch_mode_vfp";
 };
-//wangyanhui end 
 
 
 /* PM8937 GPIO configuration */

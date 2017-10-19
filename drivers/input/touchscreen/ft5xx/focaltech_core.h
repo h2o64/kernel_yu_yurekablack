@@ -231,9 +231,7 @@ struct fts_ts_data {
 * Global variable or extern global variabls/functions
 *******************************************************************************/
 //Function Switchs: define to open,  comment to close
-//Begin<REQ><><20150910>Add WAKEUP_GESTURE for ft5xx;xiongdajun
 #define FTS_GESTRUE_EN 1
-//Begin<REQ><><20150910>Add WAKEUP_GESTURE for ft5xx;xiongdajun
 #ifdef CONFIG_FT5XX_TGESTURE_FUNCTION
 #if FTS_GESTRUE_EN
 #define KEY_FT5XX_SENSOR 251
@@ -241,7 +239,6 @@ extern struct input_dev *ft5xx_key_dev;
 extern u8 gTGesture;
 #endif
 #endif
-//End<REQ><><20150815>Add WAKEUP_GESTURE for ft5xx;xiongdajun
 #define GTP_ESD_PROTECT 0
 #define FTS_APK_DEBUG
 #define FTS_SYSFS_DEBUG

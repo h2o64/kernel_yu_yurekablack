@@ -108,7 +108,6 @@ int32_t msm_sensor_free_sensor_data(struct msm_sensor_ctrl_t *s_ctrl)
 	return 0;
 }
 
-//BEGIN<20150826><add for dual flash >wangyanhui 
 /*this function only used in leds-msm-gpio-dual-flash.c ,if don't use dual flash,  pls keep below code*/
 int  is_front_camera = 0;
 void msm_sensor_set_front_camera_status(int  status)
@@ -119,7 +118,6 @@ int msm_sensor_is_front_camera(void)
 {
      return is_front_camera;
 }
-//END<20150826><add for dual flash >wangyanhui 
 
 int msm_sensor_power_down(struct msm_sensor_ctrl_t *s_ctrl)
 {
@@ -132,7 +130,6 @@ int msm_sensor_power_down(struct msm_sensor_ctrl_t *s_ctrl)
 			__func__, __LINE__, s_ctrl);
 		return -EINVAL;
 	}
-	msm_sensor_set_front_camera_status(0);//LINE<20150826><add for dual flash >wangyanhui 
 
 	if (s_ctrl->is_csid_tg_mode)
 		return 0;
@@ -226,12 +223,10 @@ int msm_sensor_match_id(struct msm_sensor_ctrl_t *s_ctrl)
 {
 	int rc = 0;
 	uint16_t chipid = 0;
-    //BEGIN<20160602><add camera otp>wangyanhui add 	
     #ifdef CONFIG_PROJECT_GARLIC
        uint16_t mid = 0;
        uint16_t flag = 0;
     #endif
-    //END<20160602><add camera otp>wangyanhui add 	
 	struct msm_camera_i2c_client *sensor_i2c_client;
 	struct msm_camera_slave_info *slave_info;
 	const char *sensor_name;
@@ -260,7 +255,6 @@ int msm_sensor_match_id(struct msm_sensor_ctrl_t *s_ctrl)
 		return rc;
 	}
 
-//BEGIN<20160602><add camera otp>wangyanhui add 
 #ifdef CONFIG_PROJECT_GARLIC
         pr_err("%s: sensor_name is %s\n", __func__, sensor_name);
         if((!strncmp(s_ctrl->sensordata->sensor_name, "imx258_guangbao_p7201", sizeof("imx258_guangbao_p7201"))))
@@ -337,17 +331,13 @@ int msm_sensor_match_id(struct msm_sensor_ctrl_t *s_ctrl)
 
         } 		
 #endif
-//END<20160602><add camera otp>wangyanhui add 
 	pr_debug("%s: read id: 0x%x expected id 0x%x:\n",
 			__func__, chipid, slave_info->sensor_id);
-    pr_err("%s: xiongdajun add %d\n",
 			__func__, s_ctrl->id);
-      //BEGIN<20150826><add for dual flash >wangyanhui 
 	if(s_ctrl->id == 2)
 	   	msm_sensor_set_front_camera_status(1);
 	else
 	   	msm_sensor_set_front_camera_status(0);
-	//END<20150826><add for dual flash >wangyanhui 
 	if (msm_sensor_id_by_mask(s_ctrl, chipid) != slave_info->sensor_id) {
 		pr_err("%s chip id %x does not match %x\n",
 				__func__, chipid, slave_info->sensor_id);

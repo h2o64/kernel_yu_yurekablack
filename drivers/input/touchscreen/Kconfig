@@ -1112,15 +1112,13 @@ config TOUCHSCREEN_SYNAPTICS_DSX_FW_UPDATE
 
 	  To compile this driver as a module, choose M here: the
 	  module will be called synaptics_dsx_fw_update.
-#Begin<BUG><JABALL-27><20150407>store tp  info;xiongdajun
+
 config PRODUCT_NAME
         string "product name"
         default "L5510"
         help
           The information of product.
-#END<BUG><JABALL-27><20150407>store tp  info;xiongdajun
 
-#Begin <REQ> <20150724> <goodix>add GESTURE_WAKEUP
 config TP_TGESTURE
 	bool "TP gesture"
 	default n
@@ -1137,8 +1135,6 @@ config SYNA_TGESTURE_FUNCTION
 
           If unsure, say N.
 
-#END <REQ> <20150724> <goodix>add GESTURE_WAKEUP
-#Begin<REQ><><20150910>Add WAKEUP_GESTURE for ft5xx;xiongdajun
 config FT5XX_TGESTURE_FUNCTION
 	bool "syna tgesture function"
 	default n
@@ -1146,7 +1142,7 @@ config FT5XX_TGESTURE_FUNCTION
 	  Say Y here if you use syna TP gesture function.
 
           If unsure, say N.
-#End<REQ><><20150910>Add WAKEUP_GESTURE for ft5xx;xiongdajun
+
 config TOUCHSCREEN_GT9XX
 	bool "Goodix touchpanel GT9xx series"
 	depends on I2C

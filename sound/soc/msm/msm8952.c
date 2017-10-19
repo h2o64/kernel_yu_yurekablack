@@ -311,7 +311,6 @@ int is_ext_spk_gpio_support(struct platform_device *pdev,
 				__func__, pdata->spk_ext_pa_gpio_compatible);///yangliang add for pa compatible20170112
 			return -EINVAL;
 		}
-		gpio_direction_output(pdata->spk_ext_pa_gpio, 0); //<20160310>wangyanhui add for ext speaker--new
 		gpio_direction_output(pdata->spk_ext_pa_gpio_compatible, 0);///yangliang add for pa compatible20170112
 	}
 #elif (!defined(CONFIG_PROJECT_GARLIC))
@@ -324,7 +323,6 @@ int is_ext_spk_gpio_support(struct platform_device *pdev,
 				__func__, pdata->spk_ext_pa_gpio);
 			return -EINVAL;
 		}
-		gpio_direction_output(pdata->spk_ext_pa_gpio, 0); //<20160310>wangyanhui add for ext speaker--new
 	}
 #endif
 
@@ -354,7 +352,6 @@ static int enable_spk_ext_pa(struct snd_soc_codec *codec, int enable)
 {
 	struct snd_soc_card *card = codec->component.card;
 	struct msm8916_asoc_mach_data *pdata = snd_soc_card_get_drvdata(card);
-	//int ret; //<20160310>wangyanhui delete for  ext spk
 	int ret = 0;
 
 	#if defined(CONFIG_PROJECT_GARLIC)
@@ -417,7 +414,6 @@ static int enable_spk_ext_pa(struct snd_soc_codec *codec, int enable)
 	#endif
 
 	if (enable) {
-		//<20160310>wangyanhui delete for  ext spk
 		/*ret = msm_gpioset_activate(CLIENT_WCD_INT, "ext_spk_gpio");
 		if (ret) {
 			pr_err("%s: gpio set cannot be de-activated %s\n",
@@ -458,7 +454,6 @@ static int enable_spk_ext_pa(struct snd_soc_codec *codec, int enable)
 		#if defined(CONFIG_PROJECT_GARLIC)
 			gpio_set_value_cansleep(pdata->spk_ext_pa_gpio_compatible, enable);///yangliang add for pa compatible20170112
 		#endif
-		//<20160310>wangyanhui delete for  ext spk
 		/*ret = msm_gpioset_suspend(CLIENT_WCD_INT, "ext_spk_gpio");
 		if (ret) {
 			pr_err("%s: gpio set cannot be de-activated %s\n",
@@ -1720,7 +1715,6 @@ static void *def_msm8952_wcd_mbhc_cal(void)
 	 * 210-290 == Button 2
 	 * 360-680 == Button 3
 	 */
-	#if 1 //def CONFIG_PROJECT_P7705 //TN:peter  //<use same para>wangyanhui 
  	btn_low[0] = 120;
 	btn_high[0] = 600;
 	btn_low[1] = 200;
@@ -1732,7 +1726,6 @@ static void *def_msm8952_wcd_mbhc_cal(void)
 	btn_low[4] = 200;
 	btn_high[4] = 700;
 	#else
-       //<20160310>wangyanhui for headset btn  
 	btn_low[0] = 75;
 	btn_high[0] = 75;
 	btn_low[1] = 150;

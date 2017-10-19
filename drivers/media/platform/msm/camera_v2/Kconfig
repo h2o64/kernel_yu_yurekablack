@@ -242,7 +242,6 @@ config MSM_JPEGDMA
 	---help---
 	  Enable support for Jpeg dma engine.
 
-#wangyanhui add 
 config LEDS_MSM_GPIO_DUAL_REAR_FLASH_AND_FRONT_FLASH
 	tristate "Support for GPIO Tinno Dual Flash LEDs"
 	help

@@ -45,7 +45,6 @@
 #define RESET_DELAY 100
 
 #define TYPE_B_PROTOCOL
-//Begin<REQ><><20150902>Add WAKEUP_GESTURE for synaptics;xiongdajun
 #ifdef CONFIG_SYNA_TGESTURE_FUNCTION
 #define WAKEUP_GESTURE 1
 static struct input_dev *syna_key_dev;
@@ -53,7 +52,6 @@ static struct input_dev *syna_key_dev;
 extern u8 gTGesture;
 extern int bEnTGesture;
  #endif
-//End<REQ><><20150815>Add WAKEUP_GESTURE for synaptics;xiongdajun
 
 #define NO_0D_WHILE_2D
 /*
@@ -122,14 +120,12 @@ enum device_status {
 #define F12_MAX_X		65536
 #define F12_MAX_Y		65536
 
-//Begin<REQ><><20150902>Add WAKEUP_GESTURE for synaptics;xiongdajun
 #ifdef CONFIG_SYNA_TGESTURE_FUNCTION
 #define F11_CONTINUOUS_MODE 0x00
 #define F11_WAKEUP_GESTURE_MODE 0x04
 #define F12_CONTINUOUS_MODE 0x00
 #define F12_WAKEUP_GESTURE_MODE 0x02
 #endif
-//End<REQ><><20150902>Add WAKEUP_GESTURE for synaptics;xiongdajun
 static int synaptics_rmi4_i2c_read(struct synaptics_rmi4_data *rmi4_data,
 		unsigned short addr, unsigned char *data,
 		unsigned short length);
@@ -426,11 +422,9 @@ struct synaptics_rmi4_f1a_handle {
 
 struct synaptics_rmi4_f12_extra_data {
 	unsigned char data1_offset;
-       unsigned char data4_offset;//Line<REQ><><20150815>Add WAKEUP_GESTURE for synaptics;xiongdajun
 	unsigned char data15_offset;
 	unsigned char data15_size;
 	unsigned char data15_data[(F12_FINGERS_TO_SUPPORT + 7) / 8];
-       unsigned char ctrl20_offset;//Line<REQ><><20150815>Add WAKEUP_GESTURE for synaptics;xiongdajun
 };
 
 struct synaptics_rmi4_exp_fn {
@@ -1189,13 +1183,11 @@ static int synaptics_rmi4_f11_abs_report(struct synaptics_rmi4_data *rmi4_data,
 	int wx;
 	int wy;
 	int z;
-    //Begin<REQ><><20150902>Add WAKEUP_GESTURE for synaptics;xiongdajun
     #ifdef CONFIG_SYNA_TGESTURE_FUNCTION
         unsigned char detected_gestures;
         unsigned char charstatus[8];
         struct synaptics_rmi4_f11_extra_data *extra_data;
     #endif /*CONFIG_TGESTURE_FUNCTION*/
-    //End<REQ><><20150902>Add WAKEUP_GESTURE for synaptics;xiongdajun
 
 	/*
 	 * The number of finger status registers is determined by the
@@ -1207,7 +1199,6 @@ static int synaptics_rmi4_f11_abs_report(struct synaptics_rmi4_data *rmi4_data,
 	num_of_finger_status_regs = (fingers_supported + 3) / 4;
 	data_addr = fhandler->full_addr.data_base;
 	data_reg_blk_size = fhandler->size_of_data_register_block;
-    //Begin<REQ><><20150902>Add WAKEUP_GESTURE for synaptics;xiongdajun
     #ifdef CONFIG_SYNA_TGESTURE_FUNCTION
     extra_data = (struct synaptics_rmi4_f11_extra_data *)fhandler->extra;
     if (rmi4_data->suspend && rmi4_data->enable_wakeup_gesture) {
@@ -1281,7 +1272,6 @@ static int synaptics_rmi4_f11_abs_report(struct synaptics_rmi4_data *rmi4_data,
 		return 0;
 	}
       #endif /*CONFIG_TGESTURE_FUNCTION*/
-      //End<REQ><><20150902>Add WAKEUP_GESTURE for synaptics;xiongdajun
 	retval = synaptics_rmi4_i2c_read(rmi4_data,
 			data_addr,
 			finger_status_reg,
@@ -2046,7 +2036,6 @@ static int synaptics_rmi4_irq_enable(struct synaptics_rmi4_data *rmi4_data,
  * mask, and gathers finger data acquisition capabilities from the query
  * registers.
  */
-//Begin<REQ><><20150902>Add WAKEUP_GESTURE for synaptics;xiongdajun
 #ifdef CONFIG_SYNA_TGESTURE_FUNCTION
 static void synaptics_rmi4_set_intr_mask(struct synaptics_rmi4_fn *fhandler,
 		struct synaptics_rmi4_fn_desc *fd,
@@ -2070,7 +2059,6 @@ static void synaptics_rmi4_set_intr_mask(struct synaptics_rmi4_fn *fhandler,
 	return;
 }
 #endif
-//END<REQ><><20150902>Add WAKEUP_GESTURE for synaptics;xiongdajun
 
 static int synaptics_rmi4_f11_init(struct synaptics_rmi4_data *rmi4_data,
 		struct synaptics_rmi4_fn *fhandler,
@@ -2085,7 +2073,6 @@ static int synaptics_rmi4_f11_init(struct synaptics_rmi4_data *rmi4_data,
 	unsigned char query[F11_STD_QUERY_LEN];
 	unsigned char control[F11_STD_CTRL_LEN];
 
-//Begin<REQ><><20150902>Add WAKEUP_GESTURE for synaptics;xiongdajun
 #ifdef CONFIG_SYNA_TGESTURE_FUNCTION
        unsigned char offset;
        unsigned char fingers_supported;
@@ -2097,7 +2084,6 @@ static int synaptics_rmi4_f11_init(struct synaptics_rmi4_data *rmi4_data,
 	struct synaptics_rmi4_f11_query_27 query_27;
 	struct synaptics_rmi4_f11_ctrl_6_9 control_6_9;
 #endif
-//END<REQ><><20150902>Add WAKEUP_GESTURE for synaptics;xiongdajun
 	fhandler->fn_number = fd->fn_number;
 	fhandler->num_of_data_sources = fd->intr_src_count;
 
@@ -2205,7 +2191,6 @@ static int synaptics_rmi4_f11_init(struct synaptics_rmi4_data *rmi4_data,
 	abs_data_size = query[5] & MASK_2BIT;
 	abs_data_blk_size = 3 + (2 * (abs_data_size == 0 ? 1 : 0));
 	fhandler->size_of_data_register_block = abs_data_blk_size;
-//Begin<REQ><><20150902>Add WAKEUP_GESTURE for synaptics;xiongdajun
 #ifdef CONFIG_SYNA_TGESTURE_FUNCTION
        fhandler->extra = kmalloc(sizeof(*extra_data), GFP_KERNEL);
 	if (!fhandler->extra) {
@@ -2415,7 +2400,6 @@ static int synaptics_rmi4_f11_init(struct synaptics_rmi4_data *rmi4_data,
 	if (query_0_5.has_query_27 && query_27.has_wakeup_gesture)
 		extra_data->data38_offset = offset;
     #endif
-    //end<REQ><><20150902>Add WAKEUP_GESTURE for synaptics;xiongdajun
 
 	return retval;
 }
@@ -3143,14 +3127,12 @@ static int synaptics_rmi4_query_device(struct synaptics_rmi4_data *rmi4_data)
 			}
 		}
 	}
-//Begin<REQ><><20150902>Add WAKEUP_GESTURE for synaptics;xiongdajun
 #ifdef CONFIG_SYNA_TGESTURE_FUNCTION
 if (rmi4_data->f11_wakeup_gesture || rmi4_data->f12_wakeup_gesture)
 		rmi4_data->enable_wakeup_gesture = WAKEUP_GESTURE;
 	else
 		rmi4_data->enable_wakeup_gesture = false;
 #endif
-//END<REQ><><20150902>Add WAKEUP_GESTURE for synaptics;xiongdajun
 flash_prog_mode:
 	rmi4_data->num_of_intr_regs = (intr_count + 7) / 8;
 	dev_dbg(&rmi4_data->i2c_client->dev,
@@ -3658,12 +3640,10 @@ static int synaptics_rmi4_gpio_configure(struct synaptics_rmi4_data *rmi4_data,
 					rmi4_data->board->reset_gpio);
 				goto err_reset_gpio_dir;
 			}
-                    //Begin<add reset><><>;xiongdajun
 			gpio_set_value(rmi4_data->board->reset_gpio, 0);
 			msleep(50);
 			gpio_set_value(rmi4_data->board->reset_gpio, 1);
 			msleep(120);
-                    //END<add reset><><>;xiongdajun
 		} else
 			synaptics_rmi4_reset_command(rmi4_data);
 
@@ -3782,7 +3762,6 @@ static int synaptics_rmi4_probe(struct i2c_client *client,
 	rmi4_data->irq_enabled = false;
 	rmi4_data->fw_updating = false;
 	rmi4_data->suspended = false;
-       rmi4_data->suspend = false;//Line<REQ><><20150815>Add WAKEUP_GESTURE for synaptics;xiongdajun
 
 	rmi4_data->i2c_read = synaptics_rmi4_i2c_read;
 	rmi4_data->i2c_write = synaptics_rmi4_i2c_write;
@@ -4014,7 +3993,6 @@ static int synaptics_rmi4_probe(struct i2c_client *client,
 		dev_err(&client->dev, "Failed to check configuration\n");
 		return retval;
 	}
-    //Begin<REQ><><20150902>Add WAKEUP_GESTURE for synaptics;xiongdajun
 #ifdef CONFIG_SYNA_TGESTURE_FUNCTION
        syna_key_dev= input_allocate_device();
 	if (! syna_key_dev) 
@@ -4034,7 +4012,6 @@ static int synaptics_rmi4_probe(struct i2c_client *client,
 		dev_err(&client->dev,"[syna]SY_key_dev register : success!!\n");
 	} 
 #endif
-//End<REQ><><20150902>Add WAKEUP_GESTURE for synaptics;xiongdajun
 	return retval;
 
 err_sysfs:
@@ -4521,7 +4498,6 @@ static int synaptics_rmi4_check_configuration(struct synaptics_rmi4_data
  * disables the interrupt, and turns off the power to the sensor.
  */
 #ifdef CONFIG_PM
-//Begin<REQ><><20150902>Add WAKEUP_GESTURE for synaptics;xiongdajun
 #ifdef CONFIG_SYNA_TGESTURE_FUNCTION
 static void synaptics_rmi4_f11_wg(struct synaptics_rmi4_data *rmi4_data,
 		bool enable)
@@ -4530,7 +4506,6 @@ static void synaptics_rmi4_f11_wg(struct synaptics_rmi4_data *rmi4_data,
 	unsigned char reporting_control;
 	struct synaptics_rmi4_fn *fhandler;
 	struct synaptics_rmi4_device_info *rmi;
-       int i;  //LINE<Release all points when open tgesture><><>;xiongdajun
 	rmi = &(rmi4_data->rmi4_mod_info);
 
 	list_for_each_entry(fhandler, &rmi->support_fn_list, link) {
@@ -4565,7 +4540,6 @@ static void synaptics_rmi4_f11_wg(struct synaptics_rmi4_data *rmi4_data,
 				__func__);
 		return;
 	}
- //Begin<Release all points when open tgesture><><>;xiongdajun
  for (i = 0; i < fhandler->num_of_data_points; i++)
          {
 		input_mt_slot(rmi4_data->input_dev, i);
@@ -4574,7 +4548,6 @@ static void synaptics_rmi4_f11_wg(struct synaptics_rmi4_data *rmi4_data,
          }
 	input_mt_report_pointer_emulation(rmi4_data->input_dev, false);
 	input_sync(rmi4_data->input_dev);
-//End<Release all points when open tgesture><><>;xiongdajun
 	return;
 }
 
@@ -4587,7 +4560,6 @@ static void synaptics_rmi4_f12_wg(struct synaptics_rmi4_data *rmi4_data,
 	struct synaptics_rmi4_f12_extra_data *extra_data;
 	struct synaptics_rmi4_fn *fhandler;
 	struct synaptics_rmi4_device_info *rmi;
-       int i;    //Line<Release all points when open tgesture><><>;xiongdajun
 	rmi = &(rmi4_data->rmi4_mod_info);
 
 	list_for_each_entry(fhandler, &rmi->support_fn_list, link) {
@@ -4624,7 +4596,6 @@ static void synaptics_rmi4_f12_wg(struct synaptics_rmi4_data *rmi4_data,
 				__func__);
 		return;
 	}
-    //Begin<Release all points when open tgesture><><>;xiongdajun
     for (i = 0; i < fhandler->num_of_data_points; i++)
          {
 		input_mt_slot(rmi4_data->input_dev, i);
@@ -4633,7 +4604,6 @@ static void synaptics_rmi4_f12_wg(struct synaptics_rmi4_data *rmi4_data,
          }
 	input_mt_report_pointer_emulation(rmi4_data->input_dev, false);
 	input_sync(rmi4_data->input_dev);
-    //End<Release all points when open tgesture><><>;xiongdajun
 	return;
 }
 
@@ -4648,7 +4618,6 @@ static void synaptics_rmi4_wakeup_gesture(struct synaptics_rmi4_data *rmi4_data,
 	return;
 }
 #endif
-//End<REQ><><20150902>Add WAKEUP_GESTURE for synaptics;xiongdajun
 static int synaptics_rmi4_suspend(struct device *dev)
 {
 	struct synaptics_rmi4_data *rmi4_data = dev_get_drvdata(dev);
@@ -4664,12 +4633,10 @@ static int synaptics_rmi4_suspend(struct device *dev)
 		dev_info(dev, "Already in suspend state\n");
 		return 0;
 	}
-    //Begin<REQ><><20150902>Add WAKEUP_GESTURE for synaptics;xiongdajun
       #ifdef CONFIG_SYNA_TGESTURE_FUNCTION
 	if (rmi4_data->enable_wakeup_gesture&&bEnTGesture) {
 		synaptics_rmi4_wakeup_gesture(rmi4_data, true);
              enable_irq_wake(rmi4_data->irq);
-             //Begin<add reset><><>;xiongdajun
              if (rmi4_data->board->disable_gpios) {
         		if (rmi4_data->ts_pinctrl) {
         			retval = pinctrl_select_state(rmi4_data->ts_pinctrl,
@@ -4689,11 +4656,9 @@ static int synaptics_rmi4_suspend(struct device *dev)
                     	}
         		}
         	}
-             //END<add reset><><>;xiongdajun
 		goto exit;
 	}
       #endif
-    //End<REQ><><20150902>Add WAKEUP_GESTURE for synaptics;xiongdajun
 
 	synaptics_secure_touch_stop(rmi4_data, 1);
 
@@ -4732,12 +4697,10 @@ static int synaptics_rmi4_suspend(struct device *dev)
 			goto err_gpio_configure;
 		}
 	}
- //Begin<REQ><><20150902>Add WAKEUP_GESTURE for synaptics;xiongdajun
 #ifdef CONFIG_SYNA_TGESTURE_FUNCTION 
 exit:
 	rmi4_data->suspend = true;
 #endif
-//End<REQ><><20150902>Add WAKEUP_GESTURE for synaptics;xiongdajun
 	rmi4_data->suspended = true;
 
 	return 0;
@@ -4783,15 +4746,10 @@ static int synaptics_rmi4_resume(struct device *dev)
 		dev_info(dev, "Already in awake state\n");
 		return 0;
 	}
-//Begin <release all touches><20160614>;xiongdajun
-//END <release all touches><20160614>;xiongdajun
-    //Begin<REQ><><20150902>Add WAKEUP_GESTURE for synaptics;xiongdajun
       #ifdef CONFIG_SYNA_TGESTURE_FUNCTION
         if (rmi4_data->enable_wakeup_gesture&&bEnTGesture) {
 		synaptics_rmi4_wakeup_gesture(rmi4_data, false);
-        //Line<20150902>modify for suspend current;xiongdajun
              disable_irq_wake(rmi4_data->irq);
-            //Begin<add reset><><>;xiongdajun
         	if (rmi4_data->board->disable_gpios) {
         		if (rmi4_data->ts_pinctrl) {
         			retval = pinctrl_select_state(rmi4_data->ts_pinctrl,
@@ -4811,11 +4769,9 @@ static int synaptics_rmi4_resume(struct device *dev)
                     	}
         		}
         	}
-            //END<add reset><><>;xiongdajun
 		goto exit;
 	  }
        #endif
-    //End<REQ><><20150902>Add WAKEUP_GESTURE for synaptics;xiongdajun
 	synaptics_secure_touch_stop(rmi4_data, 1);
 
 	retval = synaptics_rmi4_regulator_lpm(rmi4_data, false);
@@ -4848,12 +4804,10 @@ static int synaptics_rmi4_resume(struct device *dev)
 		dev_err(dev, "Failed to check configuration\n");
 		goto err_check_configuration;
 	}
- //Begin<REQ><><20150902>Add WAKEUP_GESTURE for synaptics;xiongdajun
 #ifdef CONFIG_SYNA_TGESTURE_FUNCTION 
 exit:
 	rmi4_data->suspend = false;
 #endif
-//End<REQ><><20150902>Add WAKEUP_GESTURE for synaptics;xiongdajun
 	rmi4_data->suspended = false;
 
 	return 0;

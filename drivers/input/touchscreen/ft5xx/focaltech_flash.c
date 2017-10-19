@@ -107,8 +107,6 @@
 #define HIDTOI2C_DISABLE					0
 #define FTXXXX_INI_FILEPATH_CONFIG "/sdcard/"
 
-//Begin<BUG><JABALL-0><20150831>store tp  info;xiongdajun
-//Begin<BUG><JABALL-0><20150831>store tp  info;xiongdajun
 
 /*******************************************************************************
 * Private enumerations, structures and unions using typedef
@@ -459,8 +457,6 @@ void fts_get_upgrade_array(void)
 	int ret = 0;
 	
 	ret = fts_read_reg(fts_i2c_client, FTS_REG_ID,&chip_id);
-//begin <add for update failed><20160627><>;xiongdajun
-//END <add for update failed><20160627><>;xiongdajun
 	if (ret<0) 
 	{
 		printk("[Focal][Touch] read value fail");
@@ -3177,8 +3173,6 @@ int fts_ctpm_fw_upgrade_with_i_file(struct i2c_client *client)
 	return i_ret;
 }
 
-//Begin<BUG><JABALL-0><20150831>store tp  info;xiongdajun
-//Begin<BUG><JABALL-0><20150831>store tp  info;xiongdajun
 /************************************************************************
 * Name: fts_ctpm_auto_upgrade
 * Brief:  auto upgrade
@@ -3211,11 +3205,8 @@ int fts_ctpm_auto_upgrade(struct i2c_client *client,u8 vendor_id,char *config_id
 			pr_err("[FTS] upgrade failed ret=%d.\n", i_ret);
 			return -EIO;
 		}
-		//BEGIN<><20161228><update  dev info >wangyanhui
 		fts_read_reg(client, FTS_REG_FW_VER, &uc_tp_fm_ver);
 		config_id[0] = uc_tp_fm_ver;
-		//END<><20161228><update  dev info >wangyanhui
 	}
-    //Begin<BUG><JABALL-0><20150831>store tp  info;xiongdajun
 	return 0;
 }

@@ -98,11 +98,9 @@ int gf_power_off(struct gf_dev *gf_dev);
 
 int gf_hw_reset(struct gf_dev *gf_dev, unsigned int delay_ms);
 int gf_irq_num(struct gf_dev *gf_dev);
-//<copy from 7701> add by yinglong.tang
 extern int gf_power_ctl(struct gf_dev* gf_dev, bool on);
 extern int gf_power_init(struct gf_dev* gf_dev);
 extern int gf_power_deinit(struct gf_dev* gf_dev);
-//<copy from 7701> add by yinglong.tang
 
 void sendnlmsg(char *message);
 int netlink_init(void);

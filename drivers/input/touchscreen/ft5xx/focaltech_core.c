@@ -135,14 +135,12 @@
 struct i2c_client *fts_i2c_client;
 struct fts_ts_data *fts_wq_data;
 struct input_dev *fts_input_dev;
-//Begin<REQ><><20150910>Add WAKEUP_GESTURE for ft5xx;xiongdajun
 #ifdef CONFIG_FT5XX_TGESTURE_FUNCTION
 #if FTS_GESTRUE_EN
 struct input_dev *ft5xx_key_dev;
 extern int bEnTGesture;
 #endif
 #endif
-//End<REQ><><20150815>Add WAKEUP_GESTURE for ft5xx;xiongdajun
 
 static unsigned int buf_count_add=0;
 static unsigned int buf_count_neg=0;
@@ -338,7 +336,6 @@ static int fts_read_Touchdata(struct fts_ts_data *data)
 
 	u8 buf[POINT_READ_BUF] = { 0 };
 	int ret = -1;
-//Begin<REQ><><20150910>Add WAKEUP_GESTURE for ft5xx;xiongdajun
        #ifdef CONFIG_FT5XX_TGESTURE_FUNCTION
 	#if FTS_GESTRUE_EN
        u8 state;
@@ -355,7 +352,6 @@ static int fts_read_Touchdata(struct fts_ts_data *data)
         }
       #endif
       #endif
-//END<REQ><><20150910>Add WAKEUP_GESTURE for ft5xx;xiongdajun
 	
 	ret = fts_i2c_read(data->client, buf, 1, buf, POINT_READ_BUF);
 	if (ret < 0) {
@@ -828,7 +824,6 @@ static int fts_ts_stop(struct device *dev)
 	}
 	input_mt_report_pointer_emulation(data->input_dev, false);
 	input_sync(data->input_dev);
-      //Begin<20160617><modify for curent when close gesture>;xiongdajun
        #if defined(CONFIG_PROJECT_GARLIC)
         //if (!gpio_is_valid(data->pdata->reset_gpio)) {
 		txbuf[0] = FTS_REG_PMODE;
@@ -842,7 +837,6 @@ static int fts_ts_stop(struct device *dev)
 		fts_i2c_write(data->client, txbuf, sizeof(txbuf));
 	}
        #endif
-       //End<20160617><modify for curent when close gesture>;xiongdajun
 	if (data->pdata->power_on) {
 		err = data->pdata->power_on(false);
 		if (err) {
@@ -917,15 +911,11 @@ int fts_ts_suspend(struct device *dev)
 {
 	struct fts_ts_data *data = dev_get_drvdata(dev);
 
-//Begin<REQ><><20150910>Add WAKEUP_GESTURE for ft5xx;xiongdajun
 #ifdef CONFIG_FT5XX_TGESTURE_FUNCTION
 #if FTS_GESTRUE_EN
         int error = 0;
-        int i = 0;  //Line<BUG><HHABM-854><Release All touch>;xiongdajun
 if (bEnTGesture) {
 
-         disable_irq(data->client->irq);//LINE<HCABN-406><20161124><disable irq ,and it will release all touch points>wangyanhui 
-         //Begin<BUG><HHABM-854><Release All touch>;xiongdajun
          for (i = 0; i < data->pdata->num_max_touches; i++)
          {
                    input_mt_slot(data->input_dev, i);
@@ -933,7 +923,6 @@ if (bEnTGesture) {
          }
          input_mt_report_pointer_emulation(data->input_dev, false);
          input_sync(data->input_dev);
-         //END<BUG><HHABM-854><Release All touch>;xiongdajun
          fts_write_reg(fts_i2c_client, 0xd0, 0x01);
 	  if (fts_updateinfo_curr.CHIP_ID==0x54 || fts_updateinfo_curr.CHIP_ID==0x58 || fts_updateinfo_curr.CHIP_ID==0x86)
 	  {
@@ -944,13 +933,11 @@ if (bEnTGesture) {
 		fts_write_reg(fts_i2c_client, 0xd7, 0xff);
 		fts_write_reg(fts_i2c_client, 0xd8, 0xff);
 	  }
-	enable_irq(data->client->irq);  //LINE<HCABN-406><20161124><enable irq it already released all touch points>wangyanhui 
        enable_irq_wake(data->client->irq); 
        if (error)
 			dev_err(&data->client->dev,
 				"%s: set_irq_wake failed\n", __func__);
 	data->suspended = true;
-      //<Begin>add reset when open GESTRUE;xiongdajun
 	error = fts_gpio_configure(data, false);
 	if (error < 0) {
 		dev_err(dev,
@@ -964,12 +951,10 @@ if (bEnTGesture) {
             	}
             	#endif
 	}
-        //<End>add reset when open GESTRUE;xiongdajun
        return 0;
 }
 #endif
 #endif
-//END<REQ><><20150910>Add WAKEUP_GESTURE for ft5xx;xiongdajun
 	if (data->loading_fw) {
 		dev_info(dev, "Firmware loading in process...\n");
 		return 0;
@@ -994,17 +979,12 @@ if (bEnTGesture) {
 int fts_ts_resume(struct device *dev)
 {
 	int err;
-       //Begin <release all touches><20160614>;xiongdajun
-       //END <release all touches><20160614>;xiongdajun
 	struct fts_ts_data *data = dev_get_drvdata(dev);
 
 	if (!data->suspended) {
 		dev_dbg(dev, "Already in awake state\n");
 		return 0;
 	}
-    //Begin <release all touches><20160614>;xiongdajun
-     //End <release all touches><20160614>;xiongdajun
-//Begin<REQ><><20150910>Add WAKEUP_GESTURE for ft5xx;xiongdajun
 #ifdef CONFIG_FT5XX_TGESTURE_FUNCTION
 #if FTS_GESTRUE_EN
 if (bEnTGesture) {
@@ -1036,7 +1016,6 @@ if (bEnTGesture) {
         	gpio_set_value_cansleep(data->pdata->reset_gpio, 1);
         }
 		data->suspended = false;
-            //<Begin>add reset when open GESTRUE;xiongdajun
             	err = fts_gpio_configure(data, true);
         	if (err < 0) {
         		dev_err(dev,
@@ -1051,13 +1030,10 @@ if (bEnTGesture) {
                     	#endif
         	}
 
-		msleep(data->pdata->soft_rst_dly);//LINE<20160723><it effects lcd resume , so delay 200ms>wangyanhui 
-            //<End>add reset when open GESTRUE;xiongdajun
             return 0;
 }
 #endif
 #endif
-//END<REQ><><20150910>Add WAKEUP_GESTURE for ft5xx;xiongdajun
 
 	err = fts_ts_start(dev);
 	if (err < 0)
@@ -1811,7 +1787,6 @@ static int fts_ts_probe(struct i2c_client *client, const struct i2c_device_id *i
 	fts_update_fw_vendor_id(data);
 
 
-       //Begin<REQ><><20150829>add for updata when bootloader;xiongdajun
        dev_dbg(&client->dev, "data->fw_vendor_id is %d",data->fw_vendor_id );
        if ( 0xA8 == data->fw_vendor_id || 0x00 == data->fw_vendor_id )
       {
@@ -1823,7 +1798,6 @@ static int fts_ts_probe(struct i2c_client *client, const struct i2c_device_id *i
             gpio_direction_output(data->pdata->reset_gpio, 1);
 	     msleep(40);//mdelay(1);
       }
-        //END<REQ><><20150829>add for when bootloader;xiongdajun
 	FTS_STORE_TS_INFO(data->ts_info, data->family_id, data->pdata->name,
 			data->pdata->num_max_touches, data->pdata->group_id,
 			data->pdata->fw_vkey_support ? "yes" : "no",
@@ -1846,7 +1820,6 @@ static int fts_ts_probe(struct i2c_client *client, const struct i2c_device_id *i
 		}
 	#endif
 	
-////Begin<REQ><><20150910>Add WAKEUP_GESTURE for ft5xx;xiongdajun
 #ifdef CONFIG_FT5XX_TGESTURE_FUNCTION
 	#if FTS_GESTRUE_EN
 		//fts_Gesture_init(input_dev);
@@ -1870,7 +1843,6 @@ static int fts_ts_probe(struct i2c_client *client, const struct i2c_device_id *i
 	} 
 	#endif
 #endif
-//END<REQ><><20150910>Add WAKEUP_GESTURE for ft5xx;xiongdajun
 	/**/
 	//#ifdef FTS_AUTO_UPGRADE
 	printk("********************Enter CTP Auto Upgrade********************\n");

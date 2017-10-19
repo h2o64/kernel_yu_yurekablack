@@ -50,12 +50,10 @@ struct switch_dev hall_sensor_data = {
 #endif
 //yangliang add for ftm read hall info including far and near;20150902
 
-//LINE<JIRA_ID><DATE20160330><BUG_INFO>zenghaihui
 static int g_hall_state = 0;
 //const int keycode = KEY_MEDIA;
 static  void sendevent(int status ,struct input_dev *dev_input)
 {
-	if(status == 1)//LINE<20161101><just redefine event>wangyanhui
         {
             #ifdef CONFIG_SWITCH//yangliang add for ftm-hph switch;20150830
             switch_set_state(&hall_sensor_data, 1);
@@ -64,7 +62,6 @@ static  void sendevent(int status ,struct input_dev *dev_input)
             input_report_key(dev_input, KEY_HALLOPEN, 0);
             pr_info("sendevent : KEY_HALLOPEN = %d,  set g_hall_state = 1 to ftm, meaning open \n", KEY_HALLOPEN);
 
-            //LINE<JIRA_ID><DATE20160330><BUG_INFO>zenghaihui
             g_hall_state = 1; // (0:cover;1:open)
         }
         else
@@ -76,7 +73,6 @@ static  void sendevent(int status ,struct input_dev *dev_input)
             pr_info("sendevent : KEY_HALLCLOSE = %d,  set g_hall_state = 0 to ftm, meaning cover  \n", KEY_HALLCLOSE);
             input_report_key(dev_input, KEY_HALLCLOSE, 1);
             input_report_key(dev_input, KEY_HALLCLOSE, 0);
-            //LINE<JIRA_ID><DATE20160330><BUG_INFO>zenghaihui
             g_hall_state = 0; // (0:cover;1:open)
         }
 		
@@ -255,7 +251,6 @@ static int hall_parse_dt(struct device *dev, struct hall_data *data)
 }
 #endif
 
-//LINE<JIRA_ID><DATE20160330><BUG_INFO>zenghaihui
 static ssize_t hall_info_show(struct device *dev, struct device_attribute *attr, char *buf)
 {
 	return sprintf(buf, "%d", g_hall_state);    
@@ -263,7 +258,6 @@ static ssize_t hall_info_show(struct device *dev, struct device_attribute *attr,
 
 static DEVICE_ATTR(hall_state, 0444, hall_info_show, NULL);
 
-//BEGIN<20160729><create hall node for wiko>wangyanhui
 static ssize_t hall_driver_info_show(struct device_driver *ddri, char *buf)
 {
 	return sprintf(buf, "%d\n", g_hall_state);
@@ -271,7 +265,6 @@ static ssize_t hall_driver_info_show(struct device_driver *ddri, char *buf)
 static DRIVER_ATTR(hall_state,     S_IWUSR | S_IRUGO, hall_driver_info_show, NULL);
 
 static struct platform_driver hall_driver;
-//END<20160729><create hall node for wiko>wangyanhui
 
 static int hall_driver_probe(struct platform_device *dev)
 {
@@ -362,15 +355,12 @@ static int hall_driver_probe(struct platform_device *dev)
 		goto err_regulator_init;
 	}
 
-        //LINE<JIRA_ID><DATE20160330><BUG_INFO>zenghaihui
 	device_create_file(&dev->dev, &dev_attr_hall_state);
 
-	//BEGIN<20160729><create hall node for wiko>wangyanhui	
    	err = driver_create_file(&hall_driver.driver, &driver_attr_hall_state);
 	if (err < 0) {
 		dev_err(&dev->dev, "driver_create_file  failed: %d\n", err);
 	}
-	//END<20160729><create hall node for wiko>wangyanhui
 	
 	return 0;
 
@@ -401,9 +391,7 @@ static int hall_driver_remove(struct platform_device *dev)
 	switch_dev_unregister(&hall_sensor_data);
 	#endif	
 
-        //LINE<JIRA_ID><DATE20160330><BUG_INFO>zenghaihui
 	device_remove_file(&dev->dev, &dev_attr_hall_state);
-	driver_remove_file(&hall_driver.driver, &driver_attr_hall_state);//LINE<20160729><create hall node for wiko>wangyanhui
 	return 0;
 }
 
@@ -422,7 +410,6 @@ static struct of_device_id hall_match_table[] = {
 
 static struct platform_driver hall_driver = {
 	.driver = {
-		.name = "hall",//LID_DEV_NAME, //LINE<20160729><create hall node for wiko>wangyanhui
 		.owner = THIS_MODULE,
 		.of_match_table = of_match_ptr(hall_match_table),
 	},

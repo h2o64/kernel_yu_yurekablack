@@ -857,7 +857,6 @@ static int gf_remove(struct platform_device *pdev)
     list_del(&gf_dev->device_entry);
     device_destroy(gf_class, gf_dev->devt);
     clear_bit(MINOR(gf_dev->devt), minors);
-	gf_power_deinit(gf_dev);//<copy from 7701> add by yinglong.tang
     if (gf_dev->users == 0)
         //gf_cleanup(gf_dev);
 		kfree(gf_dev);

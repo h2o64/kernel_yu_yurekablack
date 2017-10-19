@@ -36,7 +36,6 @@
 #include <linux/alarmtimer.h>
 #include <linux/qpnp/qpnp-revid.h>
 
-//ADD<BUG><add estimate voltage detect><20161109>
 #ifdef CONFIG_TINNO_CHARGER_CONFIG
 #define TINNO_BAT_EST_DIFF_DETECT
 #define TINNO_BAT_EST_DETECT_TIMES  3
@@ -1976,13 +1975,11 @@ static void fg_handle_battery_insertion(struct fg_chip *chip)
 	schedule_delayed_work(&chip->update_sram_data, msecs_to_jiffies(0));
 }
 
-//BEGIN<BUG><HCABN-523><Hop two percentage my ocuur when large current dischare><20161118>huiyong.yin
 /*static int soc_to_setpoint(int soc)
 {
 	return DIV_ROUND_CLOSEST(soc * 255, 100);
 }
 */
-//END<BUG><HCABN-523><Hop two percentage my ocuur when large current dischare><20161118>huiyong.yin
 static void batt_to_setpoint_adc(int vbatt_mv, u8 *data)
 {
 	int val;
@@ -2202,13 +2199,11 @@ static int get_prop_capacity(struct fg_chip *chip)
 	if (chip->use_last_soc && chip->last_soc) {
 		if (chip->last_soc == FULL_SOC_RAW)
 			return FULL_CAPACITY;
-//BEGIN<BUG><HCABN-523><Hop two percentage my ocuur when large current dischare><20161118>huiyong.yin
 
 //	return DIV_ROUND_CLOSEST((msoc - 1) * (FULL_CAPACITY - 2),
 //			FULL_SOC_RAW - 2) + 1;
 
 	return DIV_ROUND_CLOSEST((msoc - 1) * (FULL_CAPACITY - 1),FULL_SOC_RAW - 2) + 1;
-//END<BUG><HCABN-523><Hop two percentage my ocuur when large current dischare><20161118>huiyong.yin
 	}
 
 	if (chip->battery_missing)
@@ -2250,13 +2245,11 @@ static int get_prop_capacity(struct fg_chip *chip)
 		return FULL_CAPACITY;
 	}
 
-//BEGIN<BUG><HCABN-523><Hop two percentage my ocuur when large current dischare><20161118>huiyong.yin
 
 //	return DIV_ROUND_CLOSEST((msoc - 1) * (FULL_CAPACITY - 2),
 //			FULL_SOC_RAW - 2) + 1;
 
 	return DIV_ROUND_CLOSEST((msoc - 1) * (FULL_CAPACITY - 1),FULL_SOC_RAW - 2) + 1;
-//END<BUG><HCABN-523><Hop two percentage my ocuur when large current dischare><20161118>huiyong.yin
 }
 
 #define HIGH_BIAS	3
@@ -6236,7 +6229,6 @@ static int fg_batt_profile_init(struct fg_chip *chip)
 	const char *data, *batt_type_str;
 	bool tried_again = false, vbat_in_range, profiles_same;
 	u8 reg = 0;
-	//ADD<BUG><add estimate voltage detect><20161109>
 	#ifdef TINNO_BAT_EST_DIFF_DETECT
 	int detect_count=0;
 	union power_supply_propval tinno_system_level = {0, };
@@ -6383,7 +6375,6 @@ wait:
 	}
 
 
-//ADD<BUG><add estimate voltage detect><20161109>
 #ifdef TINNO_BAT_EST_DIFF_DETECT
 	printk("FG_DATA_VOLTAGE =%d \n",fg_data[FG_DATA_VOLTAGE].value);
 	if(fg_data[FG_DATA_VOLTAGE].value>TINNO_BAT_LOW_VOLTAGE_LIMIT)
@@ -6405,7 +6396,6 @@ wait:
 #endif
 	vbat_in_range = get_vbat_est_diff(chip)
 			< settings[FG_MEM_VBAT_EST_DIFF].value * 1000;
-//ADD<BUG><add estimate voltage detect><20161109>
 #ifdef TINNO_BAT_EST_DIFF_DETECT
 //set input current 3000	
 	while((!vbat_in_range)&&(detect_count<TINNO_BAT_EST_DETECT_TIMES))
@@ -8008,7 +7998,6 @@ static int fg_common_hw_init(struct fg_chip *chip)
 	}
 
 	rc = fg_mem_masked_write(chip, settings[FG_MEM_DELTA_SOC].address, 0xFF,
-	        //LINE<BUG><HCABN-523><Hop two percentage my ocuur when large current dischare><20161118>huiyong.yin
 			/*soc_to_setpoint(settings[FG_MEM_DELTA_SOC].value)-1*/1,
 			settings[FG_MEM_DELTA_SOC].offset);
 	if (rc) {

@@ -1670,6 +1670,5 @@
 				drive-strength = <2>; /* 2 MA */
 			};
 		};
-		//wangyanhui add end
 	};
 };

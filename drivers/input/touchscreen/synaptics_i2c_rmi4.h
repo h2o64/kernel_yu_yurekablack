@@ -253,7 +253,6 @@ struct synaptics_rmi4_data {
 	bool irq_enabled;
 	bool touch_stopped;
 	bool fingers_on_2d;
-       bool suspend;//Line<REQ><><20150815>Add WAKEUP_GESTURE for synaptics;xiongdajun
 	bool sensor_sleep;
 	bool flip_x;
 	bool flip_y;
@@ -261,11 +260,9 @@ struct synaptics_rmi4_data {
 	bool suspended;
 	wait_queue_head_t wait;
 	bool stay_awake;
-      //Begin<REQ><><20150815>Add WAKEUP_GESTURE for synaptics;xiongdajun
     	bool f11_wakeup_gesture;
        bool f12_wakeup_gesture;
        bool enable_wakeup_gesture;
-       //End<REQ><><20150815>Add WAKEUP_GESTURE for synaptics;xiongdajun
 	bool staying_awake;
 	int (*i2c_read)(struct synaptics_rmi4_data *pdata, unsigned short addr,
 			unsigned char *data, unsigned short length);
@@ -294,7 +291,6 @@ struct synaptics_rmi4_data {
 	struct clk *iface_clk;
 #endif
 };
- //Begin<REQ><><20150902>Add WAKEUP_GESTURE for synaptics;xiongdajun
 #ifdef CONFIG_SYNA_TGESTURE_FUNCTION
 
 /*
@@ -437,7 +433,6 @@ struct synaptics_rmi4_f11_ctrl_6_9 {
 	};
 };
 #endif
- //Begin<REQ><><20150902>Add WAKEUP_GESTURE for synaptics;xiongdajun
 enum exp_fn {
 	RMI_DEV = 0,
 	RMI_F34,

@@ -70,12 +70,10 @@ static DEFINE_MUTEX(elan_factory_mutex);
 static struct fasync_struct *fasync_queue = NULL;
 static int key_status = 0;
 
-//<copy from 7701> add by yinglong.tang
 #define GF_VDD_MIN_UV      2800000
 #define GF_VDD_MAX_UV	   2800000
 #define GF_VIO_MIN_UV      1800000
 #define GF_VIO_MAX_UV      1800000
-//<copy from 7701> add by yinglong.tang
 
 struct efsa120s_data  {
 	int 					irq_gpio;
@@ -493,7 +491,6 @@ static int elan_parse_dt(struct device *dev, struct efsa120s_data *pdata)
 	return 0;
 }
 
-//<copy from 7701> add by yinglong.tang
 int elan_power_ctl(struct efsa120s_data *pdata, bool on)
 {
 	int rc = 0;
@@ -590,7 +587,6 @@ int elan_power_deinit(struct efsa120s_data *pdata)
     return ret;
 }
 
-//<copy from 7701> add by yinglong.tang
 #ifdef POWER_NOTIFY 
 static int elan_fb_state_chg_callback(struct notifier_block *nb,
 	unsigned long val, void *data)

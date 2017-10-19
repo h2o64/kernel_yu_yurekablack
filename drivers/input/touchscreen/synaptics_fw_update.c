@@ -118,8 +118,6 @@ enum flash_update_mode {
 
 static int fwu_wait_for_idle(int timeout_ms);
 
-//Begin<BUG><JABALL-27><20150407>store tp  info;xiongdajun 
-//Begin<BUG><JABALL-27><20150407>store tp  info;xiongdajun
 struct image_header_data {
 	union {
 		struct {
@@ -784,7 +782,6 @@ static enum flash_area fwu_go_nogo(void)
 			goto exit;
 		}
 	}
-//Begin<REQ><20150409><TP update if in flash prog mode>;xiongdajun
 	retval = fwu_read_f01_device_status(&f01_device_status);
 	if (retval < 0) {
 		flash_area = NONE;
@@ -799,7 +796,6 @@ static enum flash_area fwu_go_nogo(void)
 		flash_area = UI_FIRMWARE;
 		goto exit;
 	}
-//end<REQ><20150409><TP update if in flash prog mode>;xiongdajun
 	if (img->is_contain_build_info) {
 		/* if package id does not match, do not update firmware */
 		fwu->fn_ptr->read(fwu->rmi4_data,
@@ -1706,8 +1702,6 @@ exit:
 		release_firmware(fw_entry);
 
 	pr_notice("%s: End of reflash process\n", __func__);
-//Begin<BUG><JABALL-27><20150407>store tp  info;xiongdajun
-//END<BUG><JABALL-27><20150407>store tp  info;xiongdajun
 
 	fwu->rmi4_data->stay_awake = false;
 	return retval;

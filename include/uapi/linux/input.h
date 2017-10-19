@@ -481,7 +481,6 @@ struct input_keymap_entry {
 
 #define KEY_MICMUTE		248	/* Mute / unmute the microphone */
 
-//wangyanhui add for hall ic
 #define KEY_HALLOPEN	249	
 #define KEY_HALLCLOSE	250
 

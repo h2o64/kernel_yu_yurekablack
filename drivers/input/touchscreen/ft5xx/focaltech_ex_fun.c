@@ -587,12 +587,10 @@ static ssize_t fts_fwupdate_store(struct device *dev, struct device_attribute *a
 	{
 		msleep(300);
 		uc_host_fm_ver = fts_ctpm_get_i_file_ver();
-	       //BEGIN<><20161228><update  dev info >wangyanhui	
 	       if(fts_wq_data != NULL)
 	       {
 			fts_wq_data->fw_ver[0] = uc_host_fm_ver;
 	       }
-	       //END<><20161228><update  dev info >wangyanhui
 		dev_dbg(dev, "%s [FTS] upgrade to new version 0x%x\n", __func__, uc_host_fm_ver);
 	}
 	else
