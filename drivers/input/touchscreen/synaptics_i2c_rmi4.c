@@ -365,10 +365,8 @@ struct synaptics_rmi4_f12_finger_data {
 #ifdef REPORT_2D_Z
 	unsigned char z;
 #endif
-#ifdef REPORT_2D_W
 	unsigned char wx;
 	unsigned char wy;
-#endif
 };
 
 struct synaptics_rmi4_f1a_query {
@@ -1249,15 +1247,9 @@ static int synaptics_rmi4_f11_abs_report(struct synaptics_rmi4_data *rmi4_data,
         	   if (retval < 0)
                     return 0;
         	   
-        	#ifdef CONFIG_S2333_IC
-        	   dev_dbg(&rmi4_data->i2c_client->dev,
-					"charstatus [2] is %d",charstatus[2]);
-        	   switch (charstatus[2])
-        	#else
         		dev_dbg(&rmi4_data->i2c_client->dev,
 					"charstatus [6] is %d",charstatus[6]);
         	   switch (charstatus[6])
-        	#endif
     		{
                     case 0x63:
                         gTGesture ='c';
@@ -1310,11 +1302,9 @@ static int synaptics_rmi4_f11_abs_report(struct synaptics_rmi4_data *rmi4_data,
 		 * 10 = finger present but data may be inaccurate
 		 * 11 = reserved
 		 */
-#ifdef TYPE_B_PROTOCOL
 		input_mt_slot(rmi4_data->input_dev, finger);
 		input_mt_report_slot_state(rmi4_data->input_dev,
 				MT_TOOL_FINGER, finger_status != 0);
-#endif
 
 		if (finger_status) {
 			data_offset = data_addr +
@@ -1356,15 +1346,10 @@ static int synaptics_rmi4_f11_abs_report(struct synaptics_rmi4_data *rmi4_data,
 			input_report_abs(rmi4_data->input_dev,
 					ABS_MT_PRESSURE, z);
 
-#ifdef REPORT_2D_W
 			input_report_abs(rmi4_data->input_dev,
 					ABS_MT_TOUCH_MAJOR, max(wx, wy));
 			input_report_abs(rmi4_data->input_dev,
 					ABS_MT_TOUCH_MINOR, min(wx, wy));
-#endif
-#ifndef TYPE_B_PROTOCOL
-			input_mt_sync(rmi4_data->input_dev);
-#endif
 			touch_count++;
 		}
 	}
@@ -1373,12 +1358,7 @@ static int synaptics_rmi4_f11_abs_report(struct synaptics_rmi4_data *rmi4_data,
 	input_report_key(rmi4_data->input_dev,
 			BTN_TOOL_FINGER, touch_count > 0);
 
-#ifndef TYPE_B_PROTOCOL
-	if (!touch_count)
-		input_mt_sync(rmi4_data->input_dev);
-#else
 	input_mt_report_pointer_emulation(rmi4_data->input_dev, false);
-#endif
 
 	input_sync(rmi4_data->input_dev);
 
@@ -1439,19 +1419,15 @@ static int synaptics_rmi4_f12_abs_report(struct synaptics_rmi4_data *rmi4_data,
 		 * 10 = finger present but data may be inaccurate
 		 * 11 = reserved
 		 */
-#ifdef TYPE_B_PROTOCOL
 		input_mt_slot(rmi4_data->input_dev, finger);
 		input_mt_report_slot_state(rmi4_data->input_dev,
 				MT_TOOL_FINGER, finger_status != 0);
-#endif
 
 		if (finger_status) {
 			x = (finger_data->x_msb << 8) | (finger_data->x_lsb);
 			y = (finger_data->y_msb << 8) | (finger_data->y_lsb);
-#ifdef REPORT_2D_W
 			wx = finger_data->wx;
 			wy = finger_data->wy;
-#endif
 
 			if (rmi4_data->flip_x)
 				x = rmi4_data->sensor_max_x - x;
@@ -1477,15 +1453,10 @@ static int synaptics_rmi4_f12_abs_report(struct synaptics_rmi4_data *rmi4_data,
 					ABS_MT_POSITION_X, x);
 			input_report_abs(rmi4_data->input_dev,
 					ABS_MT_POSITION_Y, y);
-#ifdef REPORT_2D_W
 			input_report_abs(rmi4_data->input_dev,
 					ABS_MT_TOUCH_MAJOR, max(wx, wy));
 			input_report_abs(rmi4_data->input_dev,
 					ABS_MT_TOUCH_MINOR, min(wx, wy));
-#endif
-#ifndef TYPE_B_PROTOCOL
-			input_mt_sync(rmi4_data->input_dev);
-#endif
 			touch_count++;
 		}
 	}
@@ -1494,10 +1465,6 @@ static int synaptics_rmi4_f12_abs_report(struct synaptics_rmi4_data *rmi4_data,
 			BTN_TOUCH, touch_count > 0);
 	input_report_key(rmi4_data->input_dev,
 			BTN_TOOL_FINGER, touch_count > 0);
-#ifndef TYPE_B_PROTOCOL
-	if (!touch_count)
-		input_mt_sync(rmi4_data->input_dev);
-#endif
 	input_mt_report_pointer_emulation(rmi4_data->input_dev, false);
 	input_sync(rmi4_data->input_dev);
 
@@ -1517,17 +1484,13 @@ static void synaptics_rmi4_f1a_report(struct synaptics_rmi4_data *rmi4_data,
 	struct synaptics_rmi4_f1a_handle *f1a = fhandler->data;
 	static unsigned char do_once = 1;
 	static bool current_status[MAX_NUMBER_OF_BUTTONS];
-#ifdef NO_0D_WHILE_2D
 	static bool before_2d_status[MAX_NUMBER_OF_BUTTONS];
 	static bool while_2d_status[MAX_NUMBER_OF_BUTTONS];
-#endif
 
 	if (do_once) {
 		memset(current_status, 0, sizeof(current_status));
-#ifdef NO_0D_WHILE_2D
 		memset(before_2d_status, 0, sizeof(before_2d_status));
 		memset(while_2d_status, 0, sizeof(while_2d_status));
-#endif
 		do_once = 0;
 	}
 
@@ -1559,7 +1522,6 @@ static void synaptics_rmi4_f1a_report(struct synaptics_rmi4_data *rmi4_data,
 				__func__, button,
 				f1a->button_map[button],
 				status);
-#ifdef NO_0D_WHILE_2D
 		if (rmi4_data->fingers_on_2d == false) {
 			if (status == 1) {
 				before_2d_status[button] = 1;
@@ -1587,11 +1549,6 @@ static void synaptics_rmi4_f1a_report(struct synaptics_rmi4_data *rmi4_data,
 					while_2d_status[button] = 0;
 			}
 		}
-#else
-		input_report_key(rmi4_data->input_dev,
-				f1a->button_map[button],
-				status);
-#endif
 	}
 
 	input_sync(rmi4_data->input_dev);
@@ -2619,9 +2576,7 @@ static int synaptics_rmi4_f12_init(struct synaptics_rmi4_data *rmi4_data,
 #ifdef REPORT_2D_Z
 	rmi4_data->report_enable |= RPT_Z;
 #endif
-#ifdef REPORT_2D_W
 	rmi4_data->report_enable |= (RPT_WX | RPT_WY);
-#endif
 
 	retval = synaptics_rmi4_f12_set_enables(rmi4_data,
 			fhandler->full_addr.ctrl_base + ctrl_28_offset);
@@ -3942,19 +3897,15 @@ static int synaptics_rmi4_probe(struct i2c_client *client,
 			rmi4_data->disp_maxy, 0, 0);
 	input_set_abs_params(rmi4_data->input_dev,
 			ABS_PRESSURE, 0, 255, 0, 0);
-#ifdef REPORT_2D_W
 	input_set_abs_params(rmi4_data->input_dev,
 			ABS_MT_TOUCH_MAJOR, 0,
 			rmi4_data->max_touch_width, 0, 0);
 	input_set_abs_params(rmi4_data->input_dev,
 			ABS_MT_TOUCH_MINOR, 0,
 			rmi4_data->max_touch_width, 0, 0);
-#endif
 
-#ifdef TYPE_B_PROTOCOL
 	input_mt_init_slots(rmi4_data->input_dev,
 			rmi4_data->num_of_fingers, 0);
-#endif
 
 	i2c_set_clientdata(client, rmi4_data);
 
@@ -4617,11 +4568,9 @@ static void synaptics_rmi4_f11_wg(struct synaptics_rmi4_data *rmi4_data,
  //Begin<Release all points when open tgesture><><>;xiongdajun
  for (i = 0; i < fhandler->num_of_data_points; i++)
          {
-         #ifdef TYPE_B_PROTOCOL
 		input_mt_slot(rmi4_data->input_dev, i);
 		input_mt_report_slot_state(rmi4_data->input_dev,
 				MT_TOOL_FINGER, 0);
-        #endif
          }
 	input_mt_report_pointer_emulation(rmi4_data->input_dev, false);
 	input_sync(rmi4_data->input_dev);
@@ -4678,11 +4627,9 @@ static void synaptics_rmi4_f12_wg(struct synaptics_rmi4_data *rmi4_data,
     //Begin<Release all points when open tgesture><><>;xiongdajun
     for (i = 0; i < fhandler->num_of_data_points; i++)
          {
-         #ifdef TYPE_B_PROTOCOL
 		input_mt_slot(rmi4_data->input_dev, i);
 		input_mt_report_slot_state(rmi4_data->input_dev,
 				MT_TOOL_FINGER, 0);
-        #endif
          }
 	input_mt_report_pointer_emulation(rmi4_data->input_dev, false);
 	input_sync(rmi4_data->input_dev);
@@ -4837,9 +4784,6 @@ static int synaptics_rmi4_resume(struct device *dev)
 		return 0;
 	}
 //Begin <release all touches><20160614>;xiongdajun
-       #if defined(CONFIG_PROJECT_P7701) || defined(CONFIG_PROJECT_P7705)
-    	synaptics_rmi4_release_all(rmi4_data);
-	#endif
 //END <release all touches><20160614>;xiongdajun
     //Begin<REQ><><20150902>Add WAKEUP_GESTURE for synaptics;xiongdajun
       #ifdef CONFIG_SYNA_TGESTURE_FUNCTION

@@ -149,25 +149,6 @@ static unsigned int buf_count_neg=0;
 
 u8 buf_touch_data[30*POINT_READ_BUF] = { 0 };
 
-#ifdef CONFIG_TOUCHSCREEN_FTS_PSENSOR
-static struct sensors_classdev __maybe_unused sensors_proximity_cdev = {
-	.name = "fts-proximity",
-	.vendor = "FocalTech",
-	.version = 1,
-	.handle = SENSORS_PROXIMITY_HANDLE,
-	.type = SENSOR_TYPE_PROXIMITY,
-	.max_range = "5.0",
-	.resolution = "5.0",
-	.sensor_power = "0.1",
-	.min_delay = 0,
-	.fifo_reserved_event_count = 0,
-	.fifo_max_event_count = 0,
-	.enabled = 0,
-	.delay_msec = 200,
-	.sensors_enable = NULL,
-	.sensors_poll_delay = NULL,
-};
-#endif
 
 /*******************************************************************************
 * Static function prototypes
@@ -175,19 +156,6 @@ static struct sensors_classdev __maybe_unused sensors_proximity_cdev = {
 static int fts_ts_start(struct device *dev);
 static int fts_ts_stop(struct device *dev);
 
-#ifdef CONFIG_TOUCHSCREEN_FTS_PSENSOR
-/*******************************************************************************
-*  Name: fts_psensor_support_enabled
-*  Brief:
-*  Input:
-*  Output: 
-*  Return: 
-*******************************************************************************/
-static inline bool fts_psensor_support_enabled(void)
-{
-	return config_enabled(CONFIG_TOUCHSCREEN_FTS_PSENSOR);
-}
-#endif
 
 /*******************************************************************************
 *  Name: fts_i2c_read
@@ -303,94 +271,6 @@ int fts_read_reg(struct i2c_client *client, u8 addr, u8 *val)
 	return fts_i2c_read(client, &addr, 1, val, 1);
 }
 
-#ifdef CONFIG_TOUCHSCREEN_FTS_PSENSOR
-/*******************************************************************************
-*  Name: fts_psensor_enable
-*  Brief:
-*  Input:
-*  Output: 
-*  Return: 
-*******************************************************************************/
-static void fts_psensor_enable(struct fts_ts_data *data, int enable)
-{
-	u8 state;
-	int ret = -1;
-
-	if (data->client == NULL)
-		return;
-
-	fts_read_reg(data->client, FTS_REG_PSENSOR_ENABLE, &state);
-	if (enable)
-		state |= FTS_PSENSOR_ENABLE_MASK;
-	else
-		state &= ~FTS_PSENSOR_ENABLE_MASK;
-
-	ret = fts_write_reg(data->client, FTS_REG_PSENSOR_ENABLE, state);
-	if (ret < 0)
-		dev_err(&data->client->dev,
-			"write psensor switch command failed\n");
-	return;
-}
-
-/*******************************************************************************
-*  Name: fts_psensor_enable_set
-*  Brief:
-*  Input:
-*  Output: 
-*  Return: 
-*******************************************************************************/
-static int fts_psensor_enable_set(struct sensors_classdev *sensors_cdev,
-		unsigned int enable)
-{
-	struct fts_psensor_platform_data *psensor_pdata =
-		container_of(sensors_cdev,
-			struct fts_psensor_platform_data, ps_cdev);
-	struct fts_ts_data *data = psensor_pdata->data;
-	struct input_dev *input_dev = data->psensor_pdata->input_psensor_dev;
-
-	mutex_lock(&input_dev->mutex);
-	fts_psensor_enable(data, enable);
-	psensor_pdata->tp_psensor_data = FTS_PSENSOR_ORIGINAL_STATE_FAR;
-	if (enable)
-		psensor_pdata->tp_psensor_opened = 1;
-	else
-		psensor_pdata->tp_psensor_opened = 0;
-	mutex_unlock(&input_dev->mutex);
-	return enable;
-}
-
-/*******************************************************************************
-*  Name: fts_read_tp_psensor_data
-*  Brief:
-*  Input:
-*  Output: 
-*  Return: 
-*******************************************************************************/
-static int fts_read_tp_psensor_data(struct fts_ts_data *data)
-{
-	u8 psensor_status;
-	char tmp;
-	int ret = 1;
-
-	fts_read_reg(data->client,
-			FTS_REG_PSENSOR_STATUS, &psensor_status);
-
-	tmp = data->psensor_pdata->tp_psensor_data;
-	if (psensor_status == FTS_PSENSOR_STATUS_NEAR)
-		data->psensor_pdata->tp_psensor_data =
-						FTS_PSENSOR_FAR_TO_NEAR;
-	else if (psensor_status == FTS_PSENSOR_STATUS_FAR)
-		data->psensor_pdata->tp_psensor_data =
-						FTS_PSENSOR_NEAR_TO_FAR;
-
-	if (tmp != data->psensor_pdata->tp_psensor_data) {
-		dev_dbg(&data->client->dev,
-				"%s sensor data changed\n", __func__);
-		ret = 0;
-	}
-	return ret;
-}
-#else
 /*******************************************************************************
 *  Name: fts_psensor_enable_set
 *  Brief:
@@ -419,7 +299,6 @@ static int fts_read_tp_psensor_data(struct fts_ts_data *data)
 	return 0;
 }
 */
-#endif
 
 /*******************************************************************************
 *  Name: fts_ts_interrupt
@@ -456,9 +335,6 @@ static irqreturn_t fts_ts_interrupt(int irq, void *dev_id)
 *******************************************************************************/
 static int fts_read_Touchdata(struct fts_ts_data *data)
 {
-#ifdef CONFIG_TOUCHSCREEN_FTS_PSENSOR
-	int rc = 0;
-#endif
 
 	u8 buf[POINT_READ_BUF] = { 0 };
 	int ret = -1;
@@ -480,25 +356,6 @@ static int fts_read_Touchdata(struct fts_ts_data *data)
       #endif
       #endif
 //END<REQ><><20150910>Add WAKEUP_GESTURE for ft5xx;xiongdajun
-	#ifdef CONFIG_TOUCHSCREEN_FTS_PSENSOR
-	if (fts_psensor_support_enabled() && data->pdata->psensor_support &&
-		data->psensor_pdata->tp_psensor_opened) {
-		rc = fts_read_tp_psensor_data(data);
-		if (!rc) {
-			if (data->suspended)
-				pm_wakeup_event(&data->client->dev,
-					FTS_PSENSOR_WAKEUP_TIMEOUT);
-			input_report_abs(data->psensor_pdata->input_psensor_dev,
-					ABS_DISTANCE,
-					data->psensor_pdata->tp_psensor_data);
-			input_sync(data->psensor_pdata->input_psensor_dev);
-			if (data->suspended)
-				return 1;
-		}
-		if (data->suspended)
-			return 1;
-	}
-	#endif
 	
 	ret = fts_i2c_read(data->client, buf, 1, buf, POINT_READ_BUF);
 	if (ret < 0) {
@@ -972,7 +829,7 @@ static int fts_ts_stop(struct device *dev)
 	input_mt_report_pointer_emulation(data->input_dev, false);
 	input_sync(data->input_dev);
       //Begin<20160617><modify for curent when close gesture>;xiongdajun
-       #if defined(CONFIG_PROJECT_P7701) || defined(CONFIG_PROJECT_P7203)||defined(CONFIG_PROJECT_GARLIC)
+       #if defined(CONFIG_PROJECT_GARLIC)
         //if (!gpio_is_valid(data->pdata->reset_gpio)) {
 		txbuf[0] = FTS_REG_PMODE;
 		txbuf[1] = FTS_PMODE_HIBERNATE;
@@ -1060,9 +917,6 @@ int fts_ts_suspend(struct device *dev)
 {
 	struct fts_ts_data *data = dev_get_drvdata(dev);
 
-	#ifdef CONFIG_TOUCHSCREEN_FTS_PSENSOR
-	int err = 0;
-	#endif
 //Begin<REQ><><20150910>Add WAKEUP_GESTURE for ft5xx;xiongdajun
 #ifdef CONFIG_FT5XX_TGESTURE_FUNCTION
 #if FTS_GESTRUE_EN
@@ -1126,19 +980,6 @@ if (bEnTGesture) {
 		return 0;
 	}
 
-	#ifdef CONFIG_TOUCHSCREEN_FTS_PSENSOR	
-	if (fts_psensor_support_enabled() && data->pdata->psensor_support &&
-		device_may_wakeup(dev) &&
-		data->psensor_pdata->tp_psensor_opened) {
-
-		err = enable_irq_wake(data->client->irq);
-		if (err)
-			dev_err(&data->client->dev,
-				"%s: set_irq_wake failed\n", __func__);
-		data->suspended = true;
-		return err;
-	}
-	#endif
 
 	return fts_ts_stop(dev);
 }
@@ -1154,9 +995,6 @@ int fts_ts_resume(struct device *dev)
 {
 	int err;
        //Begin <release all touches><20160614>;xiongdajun
-       #if defined(CONFIG_PROJECT_P7701)
-       int i;
-       #endif
        //END <release all touches><20160614>;xiongdajun
 	struct fts_ts_data *data = dev_get_drvdata(dev);
 
@@ -1165,16 +1003,6 @@ int fts_ts_resume(struct device *dev)
 		return 0;
 	}
     //Begin <release all touches><20160614>;xiongdajun
-    #if defined(CONFIG_PROJECT_P7701)
-      /* release all touches */
-         for (i = 0; i < data->pdata->num_max_touches; i++)
-         {
-                   input_mt_slot(data->input_dev, i);
-                   input_mt_report_slot_state(data->input_dev, MT_TOOL_FINGER, 0);
-         }
-         input_mt_report_pointer_emulation(data->input_dev, false);
-         input_sync(data->input_dev);
-     #endif
      //End <release all touches><20160614>;xiongdajun
 //Begin<REQ><><20150910>Add WAKEUP_GESTURE for ft5xx;xiongdajun
 #ifdef CONFIG_FT5XX_TGESTURE_FUNCTION
@@ -1230,19 +1058,6 @@ if (bEnTGesture) {
 #endif
 #endif
 //END<REQ><><20150910>Add WAKEUP_GESTURE for ft5xx;xiongdajun
-#ifdef CONFIG_TOUCHSCREEN_FTS_PSENSOR
-	if (fts_psensor_support_enabled() && data->pdata->psensor_support &&
-		device_may_wakeup(dev) &&
-		data->psensor_pdata->tp_psensor_opened) {
-		err = disable_irq_wake(data->client->irq);
-		if (err)
-			dev_err(&data->client->dev,
-				"%s: disable_irq_wake failed\n",
-				__func__);
-		data->suspended = false;
-		return err;
-	}
-#endif
 
 	err = fts_ts_start(dev);
 	if (err < 0)
@@ -1753,10 +1568,6 @@ static int fts_ts_probe(struct i2c_client *client, const struct i2c_device_id *i
 {
 	struct fts_ts_platform_data *pdata;
 	
-	#ifdef CONFIG_TOUCHSCREEN_FTS_PSENSOR
-	struct fts_psensor_platform_data *psensor_pdata;
-	struct input_dev *psensor_input_dev;
-	#endif
 	
 	struct fts_ts_data *data;
 	struct input_dev *input_dev;
@@ -1936,51 +1747,6 @@ static int fts_ts_probe(struct i2c_client *client, const struct i2c_device_id *i
 
 	disable_irq(client->irq);
 
-	#ifdef CONFIG_TOUCHSCREEN_FTS_PSENSOR
-	if (fts_psensor_support_enabled() && data->pdata->psensor_support) {
-		device_init_wakeup(&client->dev, 1);
-		psensor_pdata = devm_kzalloc(&client->dev,
-				sizeof(struct fts_psensor_platform_data),
-				GFP_KERNEL);
-		if (!psensor_pdata) {
-			dev_err(&client->dev, "Failed to allocate memory\n");
-			goto irq_free;
-		}
-		data->psensor_pdata = psensor_pdata;
-
-		psensor_input_dev = input_allocate_device();
-		if (!psensor_input_dev) {
-			dev_err(&data->client->dev,
-				"Failed to allocate device\n");
-			goto free_psensor_pdata;
-		}
-
-		__set_bit(EV_ABS, psensor_input_dev->evbit);
-		input_set_abs_params(psensor_input_dev,
-					ABS_DISTANCE, 0, 1, 0, 0);
-		psensor_input_dev->name = "proximity";
-		psensor_input_dev->id.bustype = BUS_I2C;
-		psensor_input_dev->dev.parent = &data->client->dev;
-		data->psensor_pdata->input_psensor_dev = psensor_input_dev;
-
-		err = input_register_device(psensor_input_dev);
-		if (err) {
-			dev_err(&data->client->dev,
-				"Unable to register device, err=%d\n", err);
-			goto free_psensor_input_dev;
-		}
-
-		psensor_pdata->ps_cdev = sensors_proximity_cdev;
-		psensor_pdata->ps_cdev.sensors_enable =
-					fts_psensor_enable_set;
-		psensor_pdata->data = data;
-
-		err = sensors_classdev_register(&client->dev,
-						&psensor_pdata->ps_cdev);
-		if (err)
-			goto unregister_psensor_input_device;
-	}
-	#endif
 	
 	data->dir = debugfs_create_dir(FTS_DEBUG_DIR_NAME, NULL);
 	if (data->dir == NULL || IS_ERR(data->dir)) {
@@ -2134,24 +1900,6 @@ static int fts_ts_probe(struct i2c_client *client, const struct i2c_device_id *i
 free_debug_dir:
 	debugfs_remove_recursive(data->dir);
 	
-#ifdef CONFIG_TOUCHSCREEN_FTS_PSENSOR
-unregister_psensor_input_device:
-	if (fts_psensor_support_enabled() && data->pdata->psensor_support)
-		input_unregister_device(data->psensor_pdata->input_psensor_dev);
-free_psensor_input_dev:
-	if (fts_psensor_support_enabled() && data->pdata->psensor_support)
-		input_free_device(data->psensor_pdata->input_psensor_dev);
-free_psensor_pdata:
-	if (fts_psensor_support_enabled() && data->pdata->psensor_support) {
-		devm_kfree(&client->dev, psensor_pdata);
-		data->psensor_pdata = NULL;
-	}
-irq_free:
-	if ((fts_psensor_support_enabled() &&
-		data->pdata->psensor_support))
-		device_init_wakeup(&client->dev, 0);
-	free_irq(client->irq, data);
-#endif
 
 free_gpio:
 	if (gpio_is_valid(pdata->reset_gpio))
@@ -2208,16 +1956,6 @@ static int fts_ts_remove(struct i2c_client *client)
 
 	debugfs_remove_recursive(data->dir);
 
-#ifdef CONFIG_TOUCHSCREEN_FTS_PSENSOR
-	if (fts_psensor_support_enabled() && data->pdata->psensor_support) {
-
-		device_init_wakeup(&client->dev, 0);
-		sensors_classdev_unregister(&data->psensor_pdata->ps_cdev);
-		input_unregister_device(data->psensor_pdata->input_psensor_dev);
-		devm_kfree(&client->dev, data->psensor_pdata);
-		data->psensor_pdata = NULL;
-	}
-#endif
 	
 #ifdef FTS_APK_DEBUG
 		fts_release_apk_debug_channel();

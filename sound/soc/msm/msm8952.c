@@ -53,7 +53,7 @@
 #define MSM_DT_MAX_PROP_SIZE 80
 
 //++ camera selfie stick TN:peter
-#if defined CONFIG_PROJECT_P7705 ||defined CONFIG_PROJECT_P7203 ||defined CONFIG_PROJECT_GARLIC ||defined CONFIG_PROJECT_P7701
+#if defined CONFIG_PROJECT_GARLIC
 #define CAMERA_SELFIE_STICK
 #endif
 //-- camera selfie stick
@@ -79,7 +79,7 @@ static atomic_t quin_mi2s_clk_ref;
 static atomic_t auxpcm_mi2s_clk_ref;
 
 //yangliang add for external padac for spk;20150708
-#if defined(CONFIG_PROJECT_P7701) || defined(CONFIG_PROJECT_P7705) || defined(CONFIG_PROJECT_P7203) || defined(CONFIG_PROJECT_GARLIC)
+#if defined(CONFIG_PROJECT_GARLIC)
 int ext_spk_pa_gpio = -1;
 #endif
 
@@ -291,7 +291,7 @@ int is_ext_spk_gpio_support(struct platform_device *pdev,
 		pdata->spk_ext_pa_gpio_compatible = of_get_named_gpio(pdev->dev.of_node,
 				spk_ext_pa_compatible, 0);///yangliang add for pa compatible20170112
 	#endif
-	#if defined(CONFIG_PROJECT_P7701) || defined(CONFIG_PROJECT_P7705) || defined(CONFIG_PROJECT_GARLIC) || defined(CONFIG_PROJECT_P7203)
+	#if defined(CONFIG_PROJECT_GARLIC)
 		ext_spk_pa_gpio = pdata->spk_ext_pa_gpio;//yangliang add 
 	#endif
 
@@ -424,23 +424,7 @@ static int enable_spk_ext_pa(struct snd_soc_codec *codec, int enable)
 					__func__, "ext_spk_gpio");
 			return ret;
 		}*/
-		//#ifdef CONFIG_PROJECT_P7705	//external pa mode 2 TN:Peter	
-		#if defined(CONFIG_PROJECT_P7701) || defined(CONFIG_PROJECT_P7705) || defined(CONFIG_PROJECT_P7203)
-			printk(KERN_ERR"goto mode-2\n");
-			ext_spk_pa_current_state = true;//yangliang add to feedback ext pa-spk used state for insert hph of spk-voice and out hph resulting in spk-voice no downlink 20160530
-			//gpio_set_value_cansleep(pdata->spk_ext_pa_gpio, 0);		
-			//udelay(2);
-			gpio_set_value_cansleep(pdata->spk_ext_pa_gpio, 1);		
-			udelay(2);
-			gpio_set_value_cansleep(pdata->spk_ext_pa_gpio, 0);			
-			udelay(2);
-			gpio_set_value_cansleep(pdata->spk_ext_pa_gpio, 1);
-		//#else
-			//ext_spk_pa_current_state = true;//yangliang add to feedback ext pa-spk used state for insert hph of spk-voice and out hph resulting in spk-voice no downlink 20160530
-			//gpio_set_value_cansleep(pdata->spk_ext_pa_gpio, enable);
-		//#endif
-
-		#elif defined(CONFIG_PROJECT_GARLIC)
+		#if defined(CONFIG_PROJECT_GARLIC)
 			printk(KERN_ERR"goto mode-2 and do compatible\n");
 			ext_spk_pa_current_state = true;//yangliang add to feedback ext pa-spk used state for insert hph of spk-voice and out hph resulting in spk-voice no downlink 20160530
 			//gpio_set_value_cansleep(pdata->spk_ext_pa_gpio, 0);		
@@ -1760,18 +1744,6 @@ static void *def_msm8952_wcd_mbhc_cal(void)
 	#endif
 	
 	//bt2 ==> camera selfie stick TN:peter 
-	#if defined CONFIG_PROJECT_P7705 ||defined CONFIG_PROJECT_P7203 ||defined CONFIG_PROJECT_P7701//TN:peter
-	btn_low[0] = 75;
-	btn_high[0] = 75;
-	btn_low[1] = 100;
-	btn_high[1] = 100;
-	btn_low[2] = 450;
-	btn_high[2] = 450;
-	btn_low[3] = 480;
-	btn_high[3] = 480;
-	btn_low[4] = 500;
-	btn_high[4] = 500;
-	#endif 
 
 	//yangliang mask and add for garlic linear hph20160729
 	#if defined(CONFIG_PROJECT_GARLIC)
@@ -3511,7 +3483,7 @@ static int msm8952_asoc_machine_remove(struct platform_device *pdev)
 	int i;
 
 	//yangliang add for external padac for spk;20150708
-	#if defined(CONFIG_PROJECT_P7701) || defined(CONFIG_PROJECT_P7705) || defined(CONFIG_PROJECT_P7203) || defined(CONFIG_PROJECT_GARLIC)
+	#if defined(CONFIG_PROJECT_GARLIC)
 	if (gpio_is_valid(ext_spk_pa_gpio))
 		gpio_free(ext_spk_pa_gpio);
 	#endif

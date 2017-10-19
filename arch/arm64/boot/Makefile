@@ -16,18 +16,6 @@
 
 DTS_CUSTOM_DIR := qcom
 
-ifeq ($(CONFIG_PROJECT_P7701),y)
-DTS_CUSTOM_DIR := p7701
-endif
-
-ifeq ($(CONFIG_PROJECT_P7705),y)
-DTS_CUSTOM_DIR := p7705
-endif
-
-ifeq ($(CONFIG_PROJECT_I9051),y)
-DTS_CUSTOM_DIR := i9051
-endif
-
 #include $(srctree)/arch/arm64/boot/dts/qcom/Makefile
 include $(srctree)/arch/arm64/boot/dts/$(DTS_CUSTOM_DIR)/Makefile
 

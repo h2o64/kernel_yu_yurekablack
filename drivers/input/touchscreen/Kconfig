@@ -1137,13 +1137,6 @@ config SYNA_TGESTURE_FUNCTION
 
           If unsure, say N.
 
-config S2333_IC
-	bool "syna s2333 ic "
-	default n
-	help
-	  Say Y here if you use syna s2333 ic.
-
-          If unsure, say N.
 #END <REQ> <20150724> <goodix>add GESTURE_WAKEUP
 #Begin<REQ><><20150910>Add WAKEUP_GESTURE for ft5xx;xiongdajun
 config FT5XX_TGESTURE_FUNCTION

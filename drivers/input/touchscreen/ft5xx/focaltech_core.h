@@ -49,9 +49,6 @@
 #include <linux/regulator/consumer.h>
 #include <linux/firmware.h>
 #include <linux/debugfs.h>
-#ifdef CONFIG_TOUCHSCREEN_FTS_PSENSOR
-#include <linux/sensors.h>
-#endif
 #include <linux/mutex.h>
 #include <linux/wait.h>
 #include <linux/time.h>
@@ -196,9 +193,6 @@ struct fts_ts_data {
 	struct input_dev *input_dev;
 	struct ts_event event;
 	const struct fts_ts_platform_data *pdata;
-	#ifdef CONFIG_TOUCHSCREEN_FTS_PSENSOR
-	struct fts_psensor_platform_data *psensor_pdata;
-	#endif
 	struct work_struct 	touch_event_work;
 	struct workqueue_struct *ts_workqueue;
 	struct regulator *vdd;
@@ -228,16 +222,6 @@ struct fts_ts_data {
 #endif
 };
 
-#ifdef CONFIG_TOUCHSCREEN_FTS_PSENSOR
-struct fts_psensor_platform_data {
-	struct input_dev *input_psensor_dev;
-	struct sensors_classdev ps_cdev;
-	int tp_psensor_opened;
-	char tp_psensor_data; /* 0 near, 1 far */
-	struct fts_ts_data *data;
-};
-#endif
-
 /*******************************************************************************
 * Static variables
 *******************************************************************************/
@@ -262,7 +246,6 @@ extern u8 gTGesture;
 #define FTS_APK_DEBUG
 #define FTS_SYSFS_DEBUG
 #define FTS_CTL_IIC
-//#define CONFIG_TOUCHSCREEN_FTS_PSENSOR
 //#define MSM_NEW_VER	//cotrol new platform
 //#define FTS_AUTO_UPGRADE
 extern struct fts_Upgrade_Info fts_updateinfo_curr;
@@ -307,10 +290,6 @@ extern int fts_i2c_read(struct i2c_client *client, char *writebuf, int writelen,
 extern int fts_i2c_write(struct i2c_client *client, char *writebuf, int writelen);
 extern int fts_read_reg(struct i2c_client *client, u8 addr, u8 *val);
 extern int fts_write_reg(struct i2c_client *client, u8 addr, const u8 val);
-
-#ifdef CONFIG_DEV_INFO
-int save_ft5xx_tp_info(int product_id, char *config_id, int id);//LINE<><20161228><update  dev info >wangyanhui
-#endif
 
 /*******************************************************************************
 * Static function prototypes
