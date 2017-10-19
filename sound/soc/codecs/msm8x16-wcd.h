@@ -228,7 +228,7 @@ struct msm8916_asoc_mach_data {
 	int ext_pa;
 	int us_euro_gpio;
 	int spk_ext_pa_gpio;
-	#if defined(CONFIG_PROJECT_P7201)
+	#if defined(CONFIG_PROJECT_GARLIC)
 	int spk_ext_pa_gpio_compatible;///yangliang add for pa compatible 7201-20140112
 	#endif
 	int mclk_freq;

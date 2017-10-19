@@ -353,7 +353,7 @@ void store_camera_info(const char *const sensor_name, const char *const eeprom_n
 		}
 	}
        //BEGIN<20160617><add camera info for 7201>wangyanhui 
-	else if(!strncmp(sensor_name, "imx258_guangbao_p7201", sizeof("imx258_guangbao_p7201")))
+	else if(!strncmp(sensor_name, "imx258_guangbao_garlic", sizeof("imx258_guangbao_garlic")))
 	{
 		rc = snprintf(main_camera_and_eeprom, DEV_INFO_LEN, "%s_(13M)", 
 			"imx258_guangbao");		
@@ -363,7 +363,7 @@ void store_camera_info(const char *const sensor_name, const char *const eeprom_n
 			store_main_camera_info(main_camera_and_eeprom);
 		}
 	}	 
-	else if(!strncmp(sensor_name, "imx258_sunny_p7201", sizeof("imx258_sunny_p7201")))
+	else if(!strncmp(sensor_name, "imx258_sunny_garlic", sizeof("imx258_sunny_garlic")))
 	{
 		rc = snprintf(main_camera_and_eeprom, DEV_INFO_LEN, "%s_(13M)", 
 			"imx258_sunny");		
@@ -373,7 +373,7 @@ void store_camera_info(const char *const sensor_name, const char *const eeprom_n
 			store_main_camera_info(main_camera_and_eeprom);
 		}
 	}		
-	 else if(!strncmp(sensor_name, "s5k4h8_p7201", sizeof("s5k4h8_p7201")))
+	 else if(!strncmp(sensor_name, "s5k4h8_garlic", sizeof("s5k4h8_garlic")))
 	{
 		 rc = snprintf(sub_camera_and_eeprom, DEV_INFO_LEN, "%s_(8M)", 
 			 "s5k4h8"); 	 

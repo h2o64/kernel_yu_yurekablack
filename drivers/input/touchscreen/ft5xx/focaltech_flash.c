@@ -119,7 +119,7 @@
 #define FTS_CTP_VENDOR_DIJING       (0x67)
 #define FTS_CTP_VENDOR_DEFAULT      (0x79)
 #define FTS_CTP_VENDOR_SHENYUE      (0xA0)
-#define FTS_CTP_VENDOR_BOEN          (0x3B) //LINE<20160617><add tp info for p7201>wangyanhui
+#define FTS_CTP_VENDOR_BOEN          (0x3B) //LINE<20160617><add tp info for garlic>wangyanhui
 extern int store_tp_info(const char *const str);
 #endif
 //Begin<BUG><JABALL-0><20150831>store tp  info;xiongdajun
@@ -135,7 +135,7 @@ static unsigned char CTPM_FW[] = {
 
 #ifdef CONFIG_PROJECT_P7701
 	#include "ft5436_fw_app_p7701.i"
-#elif defined(CONFIG_PROJECT_P7201)||defined(CONFIG_PROJECT_P7203)
+#elif defined(CONFIG_PROJECT_GARLIC)||defined(CONFIG_PROJECT_P7203)
 	#include "FT5346_BOEN_TL_7201_V21_D01_20160805_app.i"
 #else
 	#include "FT_Upgrade_App.i"
@@ -3207,7 +3207,7 @@ int save_ft5xx_tp_info(int product_id, char *config_id, int id)
 {
 	char buf[80];
        char ic_name[16];
-	#if defined(CONFIG_PROJECT_P7201)	   
+	#if defined(CONFIG_PROJECT_GARLIC)	   
          if ((id==0x54))
 	{
 		sprintf(ic_name, "FT%d3%d",5,46);
@@ -3224,7 +3224,7 @@ int save_ft5xx_tp_info(int product_id, char *config_id, int id)
             sprintf(buf, "YEJI-%s-%s--V%d",
                     CONFIG_PRODUCT_NAME , ic_name, config_id[0]);
         }
-        else if(product_id ==  FTS_CTP_VENDOR_BOEN) //LINE<20160617><add tp info for p7201>wangyanhui
+        else if(product_id ==  FTS_CTP_VENDOR_BOEN) //LINE<20160617><add tp info for garlic>wangyanhui
         {
             sprintf(buf, "BOEN-%s-%s--V%X",
                     CONFIG_PRODUCT_NAME , ic_name, config_id[0]);
