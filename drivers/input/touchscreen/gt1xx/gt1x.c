@@ -648,7 +648,7 @@ static int gt1x_ts_probe(struct i2c_client *client, const struct i2c_device_id *
 {
 	s32 ret = -1;
 #if GTP_PINCTRL
-	int err;
+	int err = 0;
 #endif
 #if GTP_AUTO_UPDATE
 	struct task_struct *thread = NULL;
