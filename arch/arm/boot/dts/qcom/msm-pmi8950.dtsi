@@ -223,6 +223,7 @@
 			qcom,fastchg-current-comp = <700>; 
 			qcom,no-parallel-defualt-dcp-icl-ma = <1400>;
 
+			qcom,no_support_qc;
 			qcom,speed-current = <1500 1400 1200 1100 900 700 600 450 400 0>;
 
 			qcom,chgr@1000 {
@@ -339,6 +340,7 @@
 			qcom,cycle-counter-en;
 			qcom,ext-sense-type;
 
+			qcom,fg-delta-soc = <1>;
 			qcom,thermal-coefficients =[c8 86 c1 50 d3 37];
 			qcom,capacity-learning-on;
 

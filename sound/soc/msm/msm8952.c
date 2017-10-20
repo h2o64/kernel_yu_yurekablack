@@ -311,6 +311,7 @@ int is_ext_spk_gpio_support(struct platform_device *pdev,
 				__func__, pdata->spk_ext_pa_gpio_compatible);///yangliang add for pa compatible20170112
 			return -EINVAL;
 		}
+		gpio_direction_output(pdata->spk_ext_pa_gpio, 0); //<20160310>wangyanhui add for ext speaker--new
 		gpio_direction_output(pdata->spk_ext_pa_gpio_compatible, 0);///yangliang add for pa compatible20170112
 	}
 #elif (!defined(CONFIG_PROJECT_GARLIC))
@@ -323,6 +324,7 @@ int is_ext_spk_gpio_support(struct platform_device *pdev,
 				__func__, pdata->spk_ext_pa_gpio);
 			return -EINVAL;
 		}
+		gpio_direction_output(pdata->spk_ext_pa_gpio, 0);
 	}
 #endif
 
@@ -1725,18 +1727,6 @@ static void *def_msm8952_wcd_mbhc_cal(void)
 	btn_high[3] = 700;
 	btn_low[4] = 200;
 	btn_high[4] = 700;
-	#else
-	btn_low[0] = 75;
-	btn_high[0] = 75;
-	btn_low[1] = 150;
-	btn_high[1] = 150;
-	btn_low[2] = 225;
-	btn_high[2] = 225;
-	btn_low[3] = 450;
-	btn_high[3] = 450;
-	#endif
-	
-	//bt2 ==> camera selfie stick TN:peter 
 
 	//yangliang mask and add for garlic linear hph20160729
 	#if defined(CONFIG_PROJECT_GARLIC)

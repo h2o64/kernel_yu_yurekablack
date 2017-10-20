@@ -909,8 +909,7 @@ static int qpnp_mpp_set(struct qpnp_led_data *led)
 						led->mpp_cfg->pwm_cfg->pwm_dev,
 						1000000,
 						1000000);
-			else
-			{
+			} else {
 			/*config pwm for brightness scaling*/
 			period_us = led->mpp_cfg->pwm_cfg->pwm_period_us;
 			if (period_us > INT_MAX / NSEC_PER_USEC) {
@@ -2620,52 +2619,10 @@ restore:
 static void led_blink(struct qpnp_led_data *led,
 			struct pwm_config_data *pwm_cfg)
 {
-	//int rc;
-	if(led->cdev.brightness>0)
-	
-	qpnp_mpp_set(led);
-#if 0
-	flush_work(&led->work);
-	mutex_lock(&led->lock);
-	if (pwm_cfg->use_blink) {
-		if (led->cdev.brightness) {
-			pwm_cfg->blinking = true;
-			if (led->id == QPNP_ID_LED_MPP)
-				led->mpp_cfg->pwm_mode = LPG_MODE;
-			else if (led->id == QPNP_ID_KPDBL)
-				led->kpdbl_cfg->pwm_mode = LPG_MODE;
-			pwm_cfg->mode = LPG_MODE;
-		} else {
-			pwm_cfg->blinking = false;
-			pwm_cfg->mode = pwm_cfg->default_mode;
-			if (led->id == QPNP_ID_LED_MPP)
-				led->mpp_cfg->pwm_mode = pwm_cfg->default_mode;
-			else if (led->id == QPNP_ID_KPDBL)
-				led->kpdbl_cfg->pwm_mode =
-						pwm_cfg->default_mode;
-		}
-		pwm_free(pwm_cfg->pwm_dev);
-		qpnp_pwm_init(pwm_cfg, led->spmi_dev, led->cdev.name);
-		if (led->id == QPNP_ID_RGB_RED || led->id == QPNP_ID_RGB_GREEN
-				|| led->id == QPNP_ID_RGB_BLUE) {
-			rc = qpnp_rgb_set(led);
-			if (rc < 0)
-				dev_err(&led->spmi_dev->dev,
-				"RGB set brightness failed (%d)\n", rc);
-		} else if (led->id == QPNP_ID_LED_MPP) {
-			rc = qpnp_mpp_set(led);
-			if (rc < 0)
-				dev_err(&led->spmi_dev->dev,
-				"MPP set brightness failed (%d)\n", rc);
-		} else if (led->id == QPNP_ID_KPDBL) {
-			rc = qpnp_kpdbl_set(led);
-			if (rc < 0)
-				dev_err(&led->spmi_dev->dev,
-				"KPDBL set brightness failed (%d)\n", rc);
-		}
-	}
-	mutex_unlock(&led->lock);
-#endif	
+	if (led->cdev.brightness>0)
+		led->cdev.brightness = 102;
+
+	qpnp_mpp_set(led);	
 }
 
 static ssize_t blink_store(struct device *dev,

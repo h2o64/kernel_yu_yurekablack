@@ -40,6 +40,7 @@
 #include <linux/ktime.h>
 #include "pmic-voter.h"
 #define ENABLE_SMART_CHARGING_CONTROL //enable smart charging control.
+bool g_do_not_support_qc=false;
 
 /* Mask/Bit helpers */
 #define _SMB_MASK(BITS, POS) \
@@ -141,6 +142,7 @@ struct smbchg_chip {
 	int				fastchg_current_ma;
 	int				vfloat_mv;
 	int				fastchg_current_comp;
+	int       no_parallel_defualt_dcp_icl_ma;
 	int				float_voltage_comp;
 	int				resume_delta_mv;
 	int				safety_time;
@@ -1907,6 +1909,7 @@ static bool is_hvdcp_present(struct smbchg_chip *chip)
 	int rc;
 	u8 reg, hvdcp_sel;
 
+	if (g_do_not_support_qc)
 		return false;
 	
 	rc = smbchg_read(chip, &reg,
@@ -7600,7 +7603,7 @@ static int smb_parse_dt(struct smbchg_chip *chip)
 				"qcom,skip-usb-suspend-for-fake-battery");
 	
 	g_do_not_support_qc = of_property_read_bool(node,
-				
+				"qcom,no_support_qc");
 
 	/* parse the battery missing detection pin source */
 	rc = of_property_read_string(chip->spmi->dev.of_node,

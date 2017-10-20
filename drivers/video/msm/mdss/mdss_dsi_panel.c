@@ -269,6 +269,7 @@ rst_gpio_err:
 	if (gpio_is_valid(ctrl_pdata->disp_en_gpio))
 		gpio_free(ctrl_pdata->disp_en_gpio);
 
+#if !defined(CONFIG_PROJECT_GARLIC)
 disp_en_gpio_err:
 #endif
 	return rc;

@@ -54,6 +54,7 @@ static int g_hall_state = 0;
 //const int keycode = KEY_MEDIA;
 static  void sendevent(int status ,struct input_dev *dev_input)
 {
+	if(status == 1)//LINE<20161101><just redefine event>wangyanhui
 	{
 #ifdef CONFIG_SWITCH//yangliang add for ftm-hph switch;20150830
 		switch_set_state(&hall_sensor_data, 1);
@@ -390,6 +391,7 @@ static int hall_driver_remove(struct platform_device *dev)
 #endif
 
 	device_remove_file(&dev->dev, &dev_attr_hall_state);
+	driver_remove_file(&hall_driver.driver, &driver_attr_hall_state);
 	return 0;
 }
 
@@ -408,6 +410,7 @@ static struct of_device_id hall_match_table[] = {
 
 static struct platform_driver hall_driver = {
 	.driver = {
+		.name = "hall",
 		.owner = THIS_MODULE,
 		.of_match_table = of_match_ptr(hall_match_table),
 	},

@@ -130,6 +130,7 @@ int msm_sensor_power_down(struct msm_sensor_ctrl_t *s_ctrl)
 			__func__, __LINE__, s_ctrl);
 		return -EINVAL;
 	}
+	msm_sensor_set_front_camera_status(0);
 
 	if (s_ctrl->is_csid_tg_mode)
 		return 0;
@@ -333,6 +334,7 @@ int msm_sensor_match_id(struct msm_sensor_ctrl_t *s_ctrl)
 #endif
 	pr_debug("%s: read id: 0x%x expected id 0x%x:\n",
 			__func__, chipid, slave_info->sensor_id);
+	pr_err("%s: xiongdajun add %d\n",
 			__func__, s_ctrl->id);
 	if(s_ctrl->id == 2)
 	   	msm_sensor_set_front_camera_status(1);

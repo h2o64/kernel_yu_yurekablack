@@ -898,8 +898,9 @@ int fts_ts_suspend(struct device *dev)
 #ifdef CONFIG_FT5XX_TGESTURE_FUNCTION
 #if FTS_GESTRUE_EN
 	int error = 0;
+	int i = 0;
 	if (bEnTGesture) {
-
+		disable_irq(data->client->irq);
 		for (i = 0; i < data->pdata->num_max_touches; i++) {
 			input_mt_slot(data->input_dev, i);
 			input_mt_report_slot_state(data->input_dev, MT_TOOL_FINGER, 0);
@@ -915,6 +916,7 @@ int fts_ts_suspend(struct device *dev)
 			fts_write_reg(fts_i2c_client, 0xd7, 0xff);
 			fts_write_reg(fts_i2c_client, 0xd8, 0xff);
 		}
+		enable_irq(data->client->irq);
 		enable_irq_wake(data->client->irq);
 		if (error)
 			dev_err(&data->client->dev,
@@ -1011,7 +1013,7 @@ int fts_ts_resume(struct device *dev)
 			}
 #endif
 		}
-
+		msleep(data->pdata->soft_rst_dly); 
 		return 0;
 	}
 #endif
