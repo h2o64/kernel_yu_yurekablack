@@ -764,9 +764,6 @@ static enum flash_area fwu_go_nogo(void)
 
 	imagePR = kzalloc(sizeof(MAX_FIRMWARE_ID_LEN), GFP_KERNEL);
 	if (!imagePR) {
-		dev_err(&i2c_client->dev,
-			"%s: Failed to alloc mem for image pointer\n",
-			__func__);
 		flash_area = NONE;
 		return flash_area;
 	}
@@ -774,28 +771,8 @@ static enum flash_area fwu_go_nogo(void)
 	if (fwu->force_update) {
 		flash_area = UI_FIRMWARE;
 		goto exit;
-	} else {
-		// TINNO: don't upgrade fw in FTM mode
-		#define STRING_BOOT_FTM_MODE "androidboot.mode=ffbm-01"
-		if (strstr(saved_command_line, STRING_BOOT_FTM_MODE)) {
-			flash_area = NONE;
-			goto exit;
-		}
-	}
-	retval = fwu_read_f01_device_status(&f01_device_status);
-	if (retval < 0) {
-		flash_area = NONE;
-		goto exit;
 	}
 
-	/* Force update firmware when device is in bootloader mode */
-	if (f01_device_status.flash_prog) {
-		dev_info(&i2c_client->dev,
-			"%s: In flash prog mode\n",
-			__func__);
-		flash_area = UI_FIRMWARE;
-		goto exit;
-	}
 	if (img->is_contain_build_info) {
 		/* if package id does not match, do not update firmware */
 		fwu->fn_ptr->read(fwu->rmi4_data,
@@ -833,6 +810,21 @@ static enum flash_area fwu_go_nogo(void)
 			fwu->config_block_count * fwu->block_size,
 			img->config_size);
 		flash_area = NONE;
+		goto exit;
+	}
+
+	retval = fwu_read_f01_device_status(&f01_device_status);
+	if (retval < 0) {
+		flash_area = NONE;
+		goto exit;
+	}
+
+	/* Force update firmware when device is in bootloader mode */
+	if (f01_device_status.flash_prog) {
+		dev_info(&i2c_client->dev,
+			"%s: In flash prog mode\n",
+			__func__);
+		flash_area = UI_FIRMWARE;
 		goto exit;
 	}
 
@@ -1026,6 +1018,7 @@ static int fwu_write_blocks(unsigned char *block_ptr, unsigned short block_cnt,
 	unsigned short addr_block_data = fwu_get_address(OFFSET_BLOCK_DATA);
 	unsigned short addr_block_num = fwu_get_address(OFFSET_BLOCK_NUMBER);
 	struct i2c_client *i2c_client = fwu->rmi4_data->i2c_client;
+#ifdef SHOW_PROGRESS
 	unsigned int progress;
 	unsigned char command_str[10];
 	switch (command) {
@@ -1046,6 +1039,7 @@ static int fwu_write_blocks(unsigned char *block_ptr, unsigned short block_cnt,
 		strlcpy(command_str, "unknown", 10);
 		break;
 	}
+#endif
 
 	dev_dbg(&i2c_client->dev,
 			"%s: Start to update %s blocks\n",
@@ -1063,12 +1057,14 @@ static int fwu_write_blocks(unsigned char *block_ptr, unsigned short block_cnt,
 	}
 
 	for (block_num = 0; block_num < block_cnt; block_num++) {
+#ifdef SHOW_PROGRESS
 		if (block_num % progress == 0)
 			dev_info(&i2c_client->dev,
 					"%s: update %s %3d / %3d\n",
 					__func__,
 					command_str,
 					block_num, block_cnt);
+#endif
 		retval = fwu->fn_ptr->write(fwu->rmi4_data,
 			addr_block_data,
 			block_ptr,
@@ -1096,6 +1092,7 @@ static int fwu_write_blocks(unsigned char *block_ptr, unsigned short block_cnt,
 			return retval;
 		}
 
+		#if CHECK_FLASH_BLOCK_STATUS
 		retval = fwu_read_f34_flash_status(&flash_status);
 		if (retval < 0) {
 			dev_err(&i2c_client->dev,
@@ -1109,13 +1106,16 @@ static int fwu_write_blocks(unsigned char *block_ptr, unsigned short block_cnt,
 				__func__, block_num, flash_status);
 			return -EINVAL;
 		}
+		#endif
 		block_ptr += fwu->block_size;
 	}
+#ifdef SHOW_PROGRESS
 	dev_info(&i2c_client->dev,
 			"%s: update %s %3d / %3d\n",
 			__func__,
 			command_str,
 			block_cnt, block_cnt);
+#endif
 	return 0;
 }
 
@@ -1585,6 +1585,7 @@ static int fwu_start_reflash(void)
 	const struct firmware *fw_entry = NULL;
 	struct f01_device_status f01_device_status;
 	enum flash_area flash_area;
+
 	pr_notice("%s: Start of reflash process\n", __func__);
 
 	if (fwu->ext_data_source)
@@ -1677,8 +1678,6 @@ static int fwu_start_reflash(void)
 
 	/* reset device */
 	fwu_reset_device();
-	msleep(200);
-	fwu_scan_pdt();
 
 	/* check device status */
 	retval = fwu_read_f01_device_status(&f01_device_status);
@@ -1702,7 +1701,6 @@ exit:
 		release_firmware(fw_entry);
 
 	pr_notice("%s: End of reflash process\n", __func__);
-
 	fwu->rmi4_data->stay_awake = false;
 	return retval;
 }
@@ -2377,11 +2375,13 @@ static int synaptics_rmi4_fwu_init(struct synaptics_rmi4_data *rmi4_data)
 
 	synaptics_rmi4_update_debug_info();
 
+#ifdef INSIDE_FIRMWARE_UPDATE
 	fwu->fwu_workqueue = create_singlethread_workqueue("fwu_workqueue");
 	INIT_DELAYED_WORK(&fwu->fwu_work, synaptics_rmi4_fwu_work);
 	queue_delayed_work(fwu->fwu_workqueue,
 			&fwu->fwu_work,
 			msecs_to_jiffies(1000));
+#endif
 
 	return 0;
 exit_free_ts_info:
