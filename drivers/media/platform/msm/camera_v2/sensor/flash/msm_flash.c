@@ -528,7 +528,7 @@ static int32_t msm_flash_low(
 					curr);
 			}
 			CDBG("low_flash_current[%d] = %d", i, curr);
-                    #if defined(CONFIG_LEDS_MSM_GPIO_DUAL_REAR_FLASH_AND_FRONT_FLASH)
+                    #ifdef CONFIG_LEDS_MSM_GPIO_DUAL_REAR_FLASH_AND_FRONT_FLASH
 	                      if((msm_sensor_is_front_camera()||flash_data->camera_id == 1))
 	    			    led_trigger_event(flash_ctrl->torch_trigger[2],
 	    				curr);
@@ -574,7 +574,7 @@ static int32_t msm_flash_high(
 					i, curr);
 			}
 			CDBG("high_flash_current[%d] = %d", i, curr);
-                    #if defined(CONFIG_LEDS_MSM_GPIO_DUAL_REAR_FLASH_AND_FRONT_FLASH)
+                    #ifdef CONFIG_LEDS_MSM_GPIO_DUAL_REAR_FLASH_AND_FRONT_FLASH
                         if((msm_sensor_is_front_camera()|| flash_data->camera_id == 1))
             			led_trigger_event(flash_ctrl->flash_trigger[2],
             				curr);
@@ -989,7 +989,7 @@ static long msm_flash_subdev_do_ioctl(
 		flash_data.flash_duration[i] = u32->flash_duration[i];
 	}
 	
-	#if defined(CONFIG_LEDS_MSM_GPIO_DUAL_REAR_FLASH_AND_FRONT_FLASH)
+	#ifdef CONFIG_LEDS_MSM_GPIO_DUAL_REAR_FLASH_AND_FRONT_FLASH
 		flash_data.flash_current[MAX_LED_TRIGGERS - 1] = flash_data.flash_current[MAX_LED_TRIGGERS - 2];
 		flash_data.flash_duration[MAX_LED_TRIGGERS - 1] = flash_data.flash_duration[MAX_LED_TRIGGERS - 2];
 	#endif

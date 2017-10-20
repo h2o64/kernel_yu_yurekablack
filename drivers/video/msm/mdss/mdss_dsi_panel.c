@@ -2651,7 +2651,7 @@ int mdss_dsi_panel_init(struct device_node *node,
 	return 0;
 }
 
-#if defined(CONFIG_PROJECT_GARLIC)
+#ifdef CONFIG_PROJECT_GARLIC
 int mdss_dsi_panel_disp_en_gpio(struct mdss_panel_data *pdata, int enable)
 {
 	struct mdss_dsi_ctrl_pdata *ctrl_pdata = NULL;

@@ -58,7 +58,7 @@ static void scm_disable_sdi(void);
 
 #ifdef __BUILD_TYPE_USER__
 
-#if defined(CONFIG_PROJECT_GARLIC)
+#ifdef CONFIG_PROJECT_GARLIC
 static int download_mode = 0;
 #else
 static int download_mode = 1;

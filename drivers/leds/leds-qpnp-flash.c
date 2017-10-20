@@ -30,7 +30,7 @@
 #include <linux/debugfs.h>
 #include <linux/uaccess.h>
 
-#if defined(CONFIG_LEDS_MSM_GPIO_DUAL_REAR_FLASH_AND_FRONT_FLASH)	
+#ifdef CONFIG_LEDS_MSM_GPIO_DUAL_REAR_FLASH_AND_FRONT_FLASH	
 #include <linux/gpio.h>
 #include <linux/of_gpio.h>
 #endif
@@ -142,7 +142,7 @@ enum flash_led_id {
 	FLASH_LED_0 = 0,
 	FLASH_LED_1,
 	FLASH_LED_SWITCH,
-#if defined(CONFIG_LEDS_MSM_GPIO_DUAL_REAR_FLASH_AND_FRONT_FLASH)	
+#ifdef CONFIG_LEDS_MSM_GPIO_DUAL_REAR_FLASH_AND_FRONT_FLASH	
 	FLASH_LED_FRONT,
 #endif
 };
@@ -226,7 +226,7 @@ struct flash_led_platform_data {
 	bool				mask3_en;
 	bool				follow_rb_disable;
 	bool				die_current_derate_en;
-#if defined(CONFIG_LEDS_MSM_GPIO_DUAL_REAR_FLASH_AND_FRONT_FLASH)
+#ifdef CONFIG_LEDS_MSM_GPIO_DUAL_REAR_FLASH_AND_FRONT_FLASH
 	unsigned front_flash_gpio_mode;
 	unsigned front_flash_gpio_en;	
 #endif
@@ -1259,7 +1259,7 @@ static void qpnp_flash_led_work(struct work_struct *work)
 	mutex_lock(&led->flash_led_lock);
 	/* Local lock is to synchronize for one led instance */
 
-#if defined(CONFIG_LEDS_MSM_GPIO_DUAL_REAR_FLASH_AND_FRONT_FLASH)
+#ifdef CONFIG_LEDS_MSM_GPIO_DUAL_REAR_FLASH_AND_FRONT_FLASH
 	if (flash_node->id == FLASH_LED_FRONT) 
 	{
 		if (!brightness)
@@ -1378,7 +1378,7 @@ static void qpnp_flash_led_work(struct work_struct *work)
                     if(flash_node->prgm_current)
                         flash_node->prgm_current = 150;
            
-           #if defined(CONFIG_PROJECT_GARLIC) 
+           #ifdef CONFIG_PROJECT_GARLIC 
                     if(flash_node->prgm_current)
                         flash_node->prgm_current = 150;
            #endif
@@ -1396,7 +1396,7 @@ static void qpnp_flash_led_work(struct work_struct *work)
 			}
 
 	           
-	           #if defined(CONFIG_PROJECT_GARLIC) 
+	           #ifdef CONFIG_PROJECT_GARLIC 
 	                    if(flash_node->prgm_current2)
 	                        flash_node->prgm_current2 = 150;
 	           #endif
@@ -2486,7 +2486,7 @@ static int qpnp_flash_led_parse_common_dt(
 			return PTR_ERR(led->gpio_state_suspend);
 		}
 	}
-#if defined(CONFIG_LEDS_MSM_GPIO_DUAL_REAR_FLASH_AND_FRONT_FLASH)
+#ifdef CONFIG_LEDS_MSM_GPIO_DUAL_REAR_FLASH_AND_FRONT_FLASH
 	led->pdata->front_flash_gpio_mode = of_get_named_gpio(node,
 			"qcom,front_flash_gpio_mode", 0);
 	if (gpio_is_valid(led->pdata->front_flash_gpio_mode)) {
