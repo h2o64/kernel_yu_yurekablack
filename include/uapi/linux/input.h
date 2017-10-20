@@ -210,7 +210,7 @@ struct input_keymap_entry {
  * Keys and buttons
  *
  * Most of the keys/buttons are modeled after USB HUT 1.12
- * (see http://www.usb.org/developers/hidpage).
+ * (see http:
  * Abbreviations in the comments:
  * AC - Application Control
  * AL - Application Launch Button

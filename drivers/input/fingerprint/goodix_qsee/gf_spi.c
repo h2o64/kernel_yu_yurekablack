@@ -58,8 +58,8 @@
 
 #include "../fp_drv/fp_drv.h"
 
-//#define GF_SPIDEV_NAME     "goodix,fingerprint"
-#define GF_SPIDEV_NAME     "qcom,fingerprint" //TINNO, modified by wenguangyu, for fingerprint
+
+#define GF_SPIDEV_NAME     "qcom,fingerprint" 
 
 /*device name after register in charater*/
 #define GF_DEV_NAME            "goodix_fp"
@@ -116,7 +116,7 @@ int g_fp_match_flag = 0;
 static int ftm_gfx_irq_state = 0;
 static int ftm_gfx_irq_send_key = 0;
 
-//for lib version
+
 #define GF_MAX_LIB_BUF    50
 static char gf_lib_ver_buf[GF_MAX_LIB_BUF] = "unknow";
 
@@ -304,7 +304,7 @@ static long gf_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
 	int retval = 0;
 	u32 tmp = 0;
 	int irq_err = -1;
-	//int i;
+	
 #ifdef AP_CONTROL_CLK
 	unsigned int speed = 0;
 #endif
@@ -355,9 +355,9 @@ static long gf_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
 #endif
 		break;
 	case GF_IOC_RESET:
-		//retval = __get_user(delay_ms, (u32 __user *) arg);
-		//if(retval == 0)
-		//{
+		
+		
+		
 		gf_hw_reset(gf_dev, 70);
 		/*}
 		else
@@ -383,9 +383,9 @@ static long gf_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
 		        gf_key.key, gf_key.value);
 
 		if (gf_key.value  == 1) {
-			ftm_gfx_irq_state = 0x1; //down.
+			ftm_gfx_irq_state = 0x1; 
 		} else if(gf_key.value  == 0) {
-			ftm_gfx_irq_state = 0x2; //up.
+			ftm_gfx_irq_state = 0x2; 
 		}
 		ftm_gfx_irq_send_key = 1;
 		wake_up(&gf_poll_wq);

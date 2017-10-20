@@ -26,13 +26,13 @@
 #ifdef CONFIG_DIAG_OVER_USB
 #include <linux/usb/usbdiag.h>
 #endif
-//2016/01/12 zyh add, trigger auto factory reset when receive diag cmd("75 84 73 78 78 79 00") during power on.
+
 #include <linux/sysfs.h>
 #include <linux/string.h>
 #include <linux/fs.h>
 #include <linux/sysctl.h>
 #include <linux/uaccess.h>
-//zyh end
+
 #include <soc/qcom/socinfo.h>
 #include <soc/qcom/restart.h>
 #include "diagmem.h"
@@ -67,7 +67,7 @@ static uint8_t common_cmds[DIAG_NUM_COMMON_CMD] = {
 	DIAG_CMD_LOG_ON_DMND
 };
 
-//wj add for audio ctl cammod begain
+
 enum {
     TEST_SPEAKER = 0,
     TEST_RECEIVER,
@@ -77,7 +77,7 @@ enum {
     TEST_STOPTEST,
     TEST_MAX,
 };
-//wj add for audio ctl cammod end
+
 
 static uint8_t hdlc_timer_in_progress;
 
@@ -790,7 +790,7 @@ int diag_check_common_cmd(struct diag_pkt_header_t *header)
 
 	return 0;
 }
-//2016/01/12 zyh add, trigger auto factory reset when receive diag cmd("75 84 73 78 78 79 00") during power on.
+
 #define FACTORY_RESET_FLAG_PATH  "/cache/recovery/command"
 #define FACTORY_RESET_FILE_PATH  "/persist/factory_reset_file"
 #define FACTORY_RESET_FILE_CONTENT "tinno finished auto factory reset"
@@ -860,7 +860,7 @@ void tinno_write_factory_reset_flag(void)
     msleep(2000);
     kernel_restart("recovery");
 }
-//zyh end
+
 
 static int diag_cmd_chk_stats(unsigned char *src_buf, int src_len,
 			      unsigned char *dest_buf, int dest_len)
@@ -968,14 +968,14 @@ int diag_process_apps_pkt(unsigned char *buf, int len,
 	int mask_ret;
 	int write_len = 0;
 	
-	//wj add for audio ctl cammod begain
+	
 	char *speaker[3] = { "AUDIO_ID=SPEAKER", NULL ,NULL};
 	char *receiver[3]    = { "AUDIO_ID=RECEIVER", NULL,NULL };
 	char *main_mic[3]   = { "AUDIO_ID=MAINMIC", NULL,NULL };
 	char *sub_mic[3]   = { "AUDIO_ID=SUBMIC", NULL,NULL };
 	char *headset_mic[3]   = { "AUDIO_ID=HEADSETMIC", NULL,NULL };
 	char *stoptest[2]   = { "AUDIO_ID=STOPTEST", NULL };
-//wj add for audio ctl cammod end
+
 
 	unsigned char *temp = NULL;
 	struct diag_cmd_reg_entry_t entry;
@@ -1003,7 +1003,7 @@ int diag_process_apps_pkt(unsigned char *buf, int len,
 
 	pr_debug("diag: In %s, received cmd %02x %02x %02x\n",
 		 __func__, entry.cmd_code, entry.subsys_id, entry.cmd_code_hi);
-		         //2016/01/12 zyh add, trigger auto factory reset when receive diag cmd("75 84 73 78 78 79 00") during power on.
+		         
         /* Check for the diag command TINNO "75 84 73 78 78 79 00"*/	
 	if(entry.subsys_id == 84 && entry.cmd_code_hi == 20041)
 	{
@@ -1013,7 +1013,7 @@ int diag_process_apps_pkt(unsigned char *buf, int len,
 	    driver->apps_rsp_buf[3] = 0x4e;
 	    driver->apps_rsp_buf[4] = 0x4e;
       driver->apps_rsp_buf[5] = 0x4f;
-	   // encode_rsp_and_send(5);
+	   
 	    diag_send_rsp(driver->apps_rsp_buf, 5);
 #if 1	
             tinno_write_factory_reset_mark_file();
@@ -1021,9 +1021,9 @@ int diag_process_apps_pkt(unsigned char *buf, int len,
 #endif
 	    return 0;
 	}
-	//zyh end
+	
 
-//wj add for audio ctl cammod("75 65 85 68 0X")
+
         /* Check for the diag command AUD "75 65 85 68 0 0"*/		
        if(entry.subsys_id == 65 && entry.cmd_code_hi == 17493){
            int test_id = (int)(*(char *)temp++);
@@ -1069,7 +1069,7 @@ int diag_process_apps_pkt(unsigned char *buf, int len,
 	    diag_send_rsp(driver->apps_rsp_buf, 5);
            return 0;
        }
-//wj add end
+
 
 	if (*buf == DIAG_CMD_LOG_ON_DMND && driver->log_on_demand_support &&
 	    driver->feature[PERIPHERAL_MODEM].rcvd_feature_mask) {

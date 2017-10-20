@@ -45,7 +45,7 @@
 #include "msm8916-wcd-irq.h"
 #include "msm8x16_wcd_registers.h"
 
-#include <linux/switch.h>//yangliang add fot ftm hph detect20150830
+#include <linux/switch.h>
 
 #define MSM8X16_WCD_RATES (SNDRV_PCM_RATE_8000 | SNDRV_PCM_RATE_16000 |\
 			SNDRV_PCM_RATE_32000 | SNDRV_PCM_RATE_48000)
@@ -83,7 +83,7 @@
  */
 #define ADSP_STATE_READY_TIMEOUT_MS 50
 
-//yangliang add for external padac for spk;20150708
+
 #if defined(CONFIG_PROJECT_GARLIC)
 bool current_ext_spk_pa_state = false;
 #endif
@@ -147,7 +147,7 @@ static bool spkr_boost_en = false;
 
 #define MSM8X16_WCD_RELEASE_LOCK(x) mutex_unlock(&x)
 
-//yangliang add for ftm hph detect20150830
+
 #ifdef CONFIG_SWITCH
 struct switch_dev wcd_mbhc_headset_switch = {
 	.name = "h2w",
@@ -463,7 +463,7 @@ static bool msm8x16_adj_ref_current(struct snd_soc_codec *codec,
 	return true;
 }
 
-//yangliang add for external padac for spk;20150708
+
 #if defined(CONFIG_PROJECT_GARLIC)
 extern int ext_spk_pa_gpio;
 #endif
@@ -2150,12 +2150,12 @@ static int msm8x16_wcd_hph_mode_set(struct snd_kcontrol *kcontrol,
 }
 
 
-//yangliang add for external padac for spk;20150708
+
 #if defined(CONFIG_PROJECT_GARLIC)
 static int msm8x16_wcd_ext_spk_get(struct snd_kcontrol *kcontrol, 
  struct snd_ctl_elem_value *ucontrol) 
 { 
- 	struct snd_soc_codec *codec = snd_soc_kcontrol_codec(kcontrol); //HHAFMCNA-710 kernel panic TN:peter
+ 	struct snd_soc_codec *codec = snd_soc_kcontrol_codec(kcontrol); 
  
 	if (current_ext_spk_pa_state == false) { 
  		ucontrol->value.integer.value[0] = 0; 
@@ -2175,7 +2175,7 @@ static int msm8x16_wcd_ext_spk_get(struct snd_kcontrol *kcontrol,
 static int msm8x16_wcd_ext_spk_set(struct snd_kcontrol *kcontrol, 
  struct snd_ctl_elem_value *ucontrol) 
 { 
-	 struct snd_soc_codec *codec = snd_soc_kcontrol_codec(kcontrol); //HHAFMCNA-710 kernel panic TN:peter
+	 struct snd_soc_codec *codec = snd_soc_kcontrol_codec(kcontrol); 
 	 
 	 dev_dbg(codec->dev, "%s: ucontrol->value.integer.value[0] = %ld\n", 
 	 __func__, ucontrol->value.integer.value[0]); 
@@ -2192,10 +2192,10 @@ static int msm8x16_wcd_ext_spk_set(struct snd_kcontrol *kcontrol,
 	 			gpio_direction_output(ext_spk_pa_gpio, 0); 
 	 			gpio_set_value_cansleep(ext_spk_pa_gpio, 0);
 				udelay(2);
-				//gpio_direction_output(ext_spk_pa_gpio, 0);
+				
 				gpio_set_value(ext_spk_pa_gpio, 1);
 				udelay(2);
-				//gpio_direction_output(ext_spk_pa_gpio, 1);
+				
 				gpio_set_value(ext_spk_pa_gpio, 0);
 				udelay(2);
 				gpio_set_value(ext_spk_pa_gpio, 1);
@@ -2647,7 +2647,7 @@ static const struct soc_enum msm8x16_wcd_hph_mode_ctl_enum[] = {
 };
 
 
-//yangliang add for external padac for spk;20150708
+
 #if defined(CONFIG_PROJECT_GARLIC)
 static const char * const msm8x16_wcd_ext_spk_ctrl_text[] = { 
 	"DISABLE", "ENABLE"};
@@ -2699,7 +2699,7 @@ static const struct snd_kcontrol_new msm8x16_wcd_snd_controls[] = {
 	SOC_ENUM_EXT("LOOPBACK Mode", msm8x16_wcd_loopback_mode_ctl_enum[0],
 		msm8x16_wcd_loopback_mode_get, msm8x16_wcd_loopback_mode_put),
 
-	//yangliang add for external padac for spk;20150708
+	
 	#if defined(CONFIG_PROJECT_GARLIC)
 	SOC_ENUM_EXT("Speaker Ext", msm8x16_wcd_ext_spk_ctl_enum[0], 
 	msm8x16_wcd_ext_spk_get, msm8x16_wcd_ext_spk_set),

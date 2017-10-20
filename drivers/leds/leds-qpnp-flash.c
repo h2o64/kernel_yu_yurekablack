@@ -1377,12 +1377,12 @@ static void qpnp_flash_led_work(struct work_struct *work)
 		if (flash_node->id == FLASH_LED_SWITCH) {
                     if(flash_node->prgm_current)
                         flash_node->prgm_current = 150;
-           //jiangwei begin
+           
            #if defined(CONFIG_PROJECT_GARLIC) 
                     if(flash_node->prgm_current)
                         flash_node->prgm_current = 150;
            #endif
-           //jiangwei end
+           
 			val = (u8)(flash_node->prgm_current *
 						FLASH_TORCH_MAX_LEVEL
 						/ flash_node->max_current);
@@ -1395,12 +1395,12 @@ static void qpnp_flash_led_work(struct work_struct *work)
 				goto exit_flash_led_work;
 			}
 
-	           //jiangwei begin
+	           
 	           #if defined(CONFIG_PROJECT_GARLIC) 
 	                    if(flash_node->prgm_current2)
 	                        flash_node->prgm_current2 = 150;
 	           #endif
-	           //jiangwei end
+	           
 			val = (u8)(flash_node->prgm_current2 *
 						FLASH_TORCH_MAX_LEVEL
 						/ flash_node->max_current);
@@ -1586,12 +1586,12 @@ static void qpnp_flash_led_work(struct work_struct *work)
 					max_curr_avail_ma) / total_curr_ma;
 			}
 
-		    //jiangwei begin
+		    
 		    #if  defined(CONFIG_PROJECT_GARLIC)
 					if(flash_node->prgm_current)
 					    flash_node->prgm_current = 750;
 		    #endif
-		    //jiangwei end
+		    
 			val = (u8)(flash_node->prgm_current *
 				FLASH_MAX_LEVEL / flash_node->max_current);
 			rc = qpnp_led_masked_write(led->spmi_dev,
@@ -1602,7 +1602,7 @@ static void qpnp_flash_led_work(struct work_struct *work)
 				goto exit_flash_led_work;
 			}
 
-		    //jiangwei begin
+		    
 		    #if  defined(CONFIG_PROJECT_GARLIC)
 					if(flash_node->prgm_current2)
 					    flash_node->prgm_current2 = 750;

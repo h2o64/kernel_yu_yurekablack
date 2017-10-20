@@ -39,7 +39,7 @@
 #ifdef CONFIG_TINNO_CHARGER_CONFIG
 #define TINNO_BAT_EST_DIFF_DETECT
 #define TINNO_BAT_EST_DETECT_TIMES  3
-#define TINNO_BAT_LOW_VOLTAGE_LIMIT 3450000  // 3.5V
+#define TINNO_BAT_LOW_VOLTAGE_LIMIT 3450000  
 #endif
 /* Register offsets */
 
@@ -643,14 +643,14 @@ struct fg_chip {
 	bool			batt_info_restore;
 	bool			*batt_range_ocv;
 	int			*batt_range_pct;
-//caizhifu add start for tinno battery info update for debug,2016-11-24
+
 #ifdef CONFIG_TINNO_BATTERY_FG_HEART
 	struct delayed_work     update_heartbeat_work;
 	bool				resume_completed;
 	bool				update_heartbeat_waiting;
 	struct mutex			r_completed_lock;
 #endif
-//caizhifu add end for tinno battery info update for debug,2016-11-24
+
 };
 
 /* FG_MEMIF DEBUGFS structures */
@@ -2200,8 +2200,8 @@ static int get_prop_capacity(struct fg_chip *chip)
 		if (chip->last_soc == FULL_SOC_RAW)
 			return FULL_CAPACITY;
 
-//	return DIV_ROUND_CLOSEST((msoc - 1) * (FULL_CAPACITY - 2),
-//			FULL_SOC_RAW - 2) + 1;
+
+
 
 	return DIV_ROUND_CLOSEST((msoc - 1) * (FULL_CAPACITY - 1),FULL_SOC_RAW - 2) + 1;
 	}
@@ -2246,8 +2246,8 @@ static int get_prop_capacity(struct fg_chip *chip)
 	}
 
 
-//	return DIV_ROUND_CLOSEST((msoc - 1) * (FULL_CAPACITY - 2),
-//			FULL_SOC_RAW - 2) + 1;
+
+
 
 	return DIV_ROUND_CLOSEST((msoc - 1) * (FULL_CAPACITY - 1),FULL_SOC_RAW - 2) + 1;
 }

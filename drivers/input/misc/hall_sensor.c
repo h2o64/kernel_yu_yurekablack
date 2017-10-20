@@ -26,7 +26,7 @@
 #include <linux/of_gpio.h>
 #include <linux/platform_device.h>
 
-#include <linux/switch.h>//yangliang add fot ftm hall detect20150830
+#include <linux/switch.h>
 
 #define	LID_DEV_NAME	"hall_sensor"
 #define HALL_INPUT	"/dev/input/hall_dev"
@@ -42,38 +42,38 @@ struct hall_data {
 	u32 max_uv;	/* device allow max voltage */
 };
 
-//yangliang add for ftm read hall info including far and near;20150902
-#ifdef CONFIG_SWITCH//yangliang add for ftm hall detect20150830
+
+#ifdef CONFIG_SWITCH
 struct switch_dev hall_sensor_data = {
 	.name = "sensor_hall",
 };
 #endif
-//yangliang add for ftm read hall info including far and near;20150902
+
 
 static int g_hall_state = 0;
-//const int keycode = KEY_MEDIA;
+
 static  void sendevent(int status ,struct input_dev *dev_input)
 {
-	if(status == 1)//LINE<20161101><just redefine event>wangyanhui
+	if(status == 1)
 	{
-#ifdef CONFIG_SWITCH//yangliang add for ftm-hph switch;20150830
+#ifdef CONFIG_SWITCH
 		switch_set_state(&hall_sensor_data, 1);
 #endif
 		input_report_key(dev_input, KEY_HALLOPEN, 1);
 		input_report_key(dev_input, KEY_HALLOPEN, 0);
 		pr_info("sendevent : KEY_HALLOPEN = %d,  set g_hall_state = 1 to ftm, meaning open \n", KEY_HALLOPEN);
 
-		g_hall_state = 1; // (0:cover;1:open)
+		g_hall_state = 1; 
 	}
 	else {
-#ifdef CONFIG_SWITCH//yangliang add for ftm-hph switch;20150830
+#ifdef CONFIG_SWITCH
 		switch_set_state(&hall_sensor_data, 0);
 #endif
 
 		pr_info("sendevent : KEY_HALLCLOSE = %d,  set g_hall_state = 0 to ftm, meaning cover  \n", KEY_HALLCLOSE);
 		input_report_key(dev_input, KEY_HALLCLOSE, 1);
 		input_report_key(dev_input, KEY_HALLCLOSE, 0);
-		g_hall_state = 0; // (0:cover;1:open)
+		g_hall_state = 0; 
 	}
 
 	input_sync(dev_input);
@@ -81,7 +81,7 @@ static  void sendevent(int status ,struct input_dev *dev_input)
 
 static irqreturn_t hall_interrupt_handler(int irq, void *dev)
 {
-//yangliang add for ftm read hall info including far and near;20150902
+
 #if 1
 	int value;
 	struct hall_data *data = dev;
@@ -123,8 +123,8 @@ static int hall_input_init(struct platform_device *pdev,
 	}
 	data->hall_dev->name = LID_DEV_NAME;
 	data->hall_dev->phys = HALL_INPUT;
-	//__set_bit(EV_SW, data->hall_dev->evbit);
-	//__set_bit(SW_LID, data->hall_dev->swbit);
+	
+	
 	__set_bit(KEY_HALLOPEN , data->hall_dev->keybit);
 	__set_bit(KEY_HALLCLOSE , data->hall_dev->keybit);
 	__set_bit(EV_KEY, data->hall_dev->evbit);
@@ -271,7 +271,7 @@ static int hall_driver_probe(struct platform_device *dev)
 	struct hall_data *data;
 	int err = 0;
 	int irq_flags;
-	int ret = 0; //yangliang add for ftm read hall info including far and near;20150902
+	int ret = 0; 
 
 	dev_dbg(&dev->dev, "hall_driver probe\n");
 	data = devm_kzalloc(&dev->dev, sizeof(struct hall_data), GFP_KERNEL);
@@ -296,7 +296,7 @@ static int hall_driver_probe(struct platform_device *dev)
 		goto exit;
 	}
 
-	//yangliang add for ftm read hall info including far and near;20150902
+	
 #ifdef CONFIG_SWITCH
 	ret = switch_dev_register(&hall_sensor_data);
 	if (ret < 0) {
@@ -332,7 +332,7 @@ static int hall_driver_probe(struct platform_device *dev)
 		dev_err(&dev->dev, "request irq failed : %d\n", data->irq);
 		goto free_gpio;
 	} else {
-		//yangliang add for ftm read hall info including far and near;20150902
+		
 		int value;
 		enable_irq_wake(data->irq);
 		value = gpio_get_value_cansleep(data->gpio);
@@ -385,7 +385,7 @@ static int hall_driver_remove(struct platform_device *dev)
 	hall_set_regulator(dev, false);
 	hall_config_regulator(dev, false);
 
-	//yangliang add for ftm read hall info including far and near;20150902
+	
 #ifdef CONFIG_SWITCH
 	switch_dev_unregister(&hall_sensor_data);
 #endif

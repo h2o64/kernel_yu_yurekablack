@@ -43,9 +43,9 @@
 					15 01 00 00 10 00 02 FF 10
 					15 01 00 00 00 00 02 35 00
 					05 01 00 00 78 00 02 11 00
-					//15 01 00 00 00 00 02 51 FF
-					//15 01 00 00 00 00 02 53 24
-					//15 01 00 00 00 00 02 55 81
+					
+					
+					
 					15 01 00 00 00 00 02 FF F0
 					15 01 00 00 00 00 02 92 01
 					15 01 00 00 00 00 02 13 01
@@ -64,14 +64,14 @@
 		qcom,mdss-dsi-on-command-state = "dsi_lp_mode";
 		qcom,mdss-dsi-off-command-state = "dsi_hs_mode";
 		
-		//add ESD check start
+		
 		qcom,esd-check-enabled;
 		qcom,mdss-dsi-panel-status-command = [06 01 00 01 05 00 02 0A 08];
 		qcom,mdss-dsi-panel-status-command-state = "dsi_lp_mode";
 		qcom,mdss-dsi-panel-status-check-mode = "reg_read";
 		qcom,mdss-dsi-panel-status-read-length = <1>;
 		qcom,mdss-dsi-panel-status-value = <0x9c>;
-		//add ESD check end
+		
 
 		qcom,mdss-dsi-h-sync-pulse = <1>;
 		qcom,mdss-dsi-traffic-mode = "burst_mode";

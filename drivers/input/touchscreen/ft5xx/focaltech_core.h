@@ -229,7 +229,7 @@ struct fts_ts_data {
 /*******************************************************************************
 * Global variable or extern global variabls/functions
 *******************************************************************************/
-//Function Switchs: define to open,  comment to close
+
 #define FTS_GESTRUE_EN 1
 #ifdef CONFIG_FT5XX_TGESTURE_FUNCTION
 #if FTS_GESTRUE_EN
@@ -242,8 +242,8 @@ extern u8 gTGesture;
 #define FTS_APK_DEBUG
 #define FTS_SYSFS_DEBUG
 #define FTS_CTL_IIC
-//#define MSM_NEW_VER	//cotrol new platform
-//#define FTS_AUTO_UPGRADE
+
+
 extern struct fts_Upgrade_Info fts_updateinfo_curr;
 extern struct i2c_client *fts_i2c_client;
 extern struct fts_ts_data *fts_wq_data;
@@ -251,13 +251,13 @@ extern struct input_dev *fts_input_dev;
 
 static DEFINE_MUTEX(i2c_rw_access);
 
-//Getstre functions
+
 extern int fts_Gesture_init(struct input_dev *input_dev);
 extern int fts_read_Gestruedata(void);
 extern int fetch_object_sample(unsigned char *buf,short pointnum);
 extern void init_para(int x_pixel,int y_pixel,int time_slot,int cut_x_pixel,int cut_y_pixel);
 
-//upgrade functions
+
 extern int fts_ctpm_fw_upgrade_ReadVendorID(struct i2c_client *client, u8 *ucPVendorID);
 extern void fts_update_fw_vendor_id(struct fts_ts_data *data);
 extern void fts_update_fw_ver(struct fts_ts_data *data);
@@ -269,19 +269,19 @@ extern int fts_ctpm_fw_upgrade_with_app_file(struct i2c_client *client, char *fi
 extern int fts_ctpm_fw_upgrade_with_i_file(struct i2c_client *client);
 extern int fts_ctpm_get_i_file_ver(void);
 
-//Apk and functions
+
 extern int fts_create_apk_debug_channel(struct i2c_client * client);
 extern void fts_release_apk_debug_channel(void);
 
-//ADB functions
+
 extern int fts_create_sysfs(struct i2c_client *client);
 extern int fts_remove_sysfs(struct i2c_client *client);
 
-//char device for old apk
+
 extern int fts_rw_iic_drv_init(struct i2c_client *client);
 extern void  fts_rw_iic_drv_exit(void);
 
-//Base functions
+
 extern int fts_i2c_read(struct i2c_client *client, char *writebuf, int writelen, char *readbuf, int readlen);
 extern int fts_i2c_write(struct i2c_client *client, char *writebuf, int writelen);
 extern int fts_read_reg(struct i2c_client *client, u8 addr, u8 *val);

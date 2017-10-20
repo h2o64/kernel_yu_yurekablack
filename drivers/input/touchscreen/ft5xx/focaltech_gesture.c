@@ -334,7 +334,7 @@ int fts_read_Gestruedata(void)
 			input_report_key(ft5xx_key_dev,KEY_FT5XX_SENSOR, 0);
 			input_sync(ft5xx_key_dev);
 		}
-		//fts_check_gesture(fts_input_dev,gestrue_id);
+		
 #endif
 		for(i = 0; i < pointnum; i++) {
 			coordinate_x[i] =  (((s16) buf[2 + (4 * i)]) & 0x0F) <<

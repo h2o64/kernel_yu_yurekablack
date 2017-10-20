@@ -36,7 +36,7 @@
 /*******************************************************************************
 * Included header files
 *******************************************************************************/
-//user defined include header files
+
 #include "focaltech_core.h"
 
 #if defined(CONFIG_FB)
@@ -425,7 +425,7 @@ static void fts_report_value(struct fts_ts_data *data)
 		if (event->au8_touch_event[i] == FTS_TOUCH_DOWN || event->au8_touch_event[i] == FTS_TOUCH_CONTACT) {
 			input_mt_report_slot_state(data->input_dev, MT_TOOL_FINGER, true);
 			input_report_abs(data->input_dev, ABS_MT_TOUCH_MAJOR, event->area[i]);
-			//input_report_abs(data->input_dev, ABS_MT_PRESSURE, event->pressure[i]);
+			
 			input_report_abs(data->input_dev, ABS_MT_POSITION_X, event->au16_x[i]);
 			input_report_abs(data->input_dev, ABS_MT_POSITION_Y, event->au16_y[i]);
 			touchs |= BIT(event->au8_finger_id[i]);
@@ -809,11 +809,11 @@ static int fts_ts_stop(struct device *dev)
 	input_mt_report_pointer_emulation(data->input_dev, false);
 	input_sync(data->input_dev);
 #if defined(CONFIG_PROJECT_GARLIC)
-	//if (!gpio_is_valid(data->pdata->reset_gpio)) {
+	
 	txbuf[0] = FTS_REG_PMODE;
 	txbuf[1] = FTS_PMODE_HIBERNATE;
 	fts_i2c_write(data->client, txbuf, sizeof(txbuf));
-	//}
+	
 #else
 	if (!gpio_is_valid(data->pdata->reset_gpio)) {
 		txbuf[0] = FTS_REG_PMODE;
@@ -1609,11 +1609,11 @@ static int fts_ts_probe(struct i2c_client *client, const struct i2c_device_id *i
 	__set_bit(INPUT_PROP_DIRECT, input_dev->propbit);
 
 	input_mt_init_slots(input_dev, pdata->num_max_touches,0);
-	//input_mt_init_slots(input_dev, pdata->num_max_touches);
+	
 	input_set_abs_params(input_dev, ABS_MT_POSITION_X, pdata->x_min, pdata->x_max, 0, 0);
 	input_set_abs_params(input_dev, ABS_MT_POSITION_Y, pdata->y_min, pdata->y_max, 0, 0);
 	input_set_abs_params(input_dev, ABS_MT_TOUCH_MAJOR, 0, 0x0f, 0, 0);
-	//input_set_abs_params(input_dev, ABS_MT_PRESSURE, 0, 0xff, 0, 0);
+	
 
 	err = input_register_device(input_dev);
 	if (err) {
@@ -1773,11 +1773,11 @@ static int fts_ts_probe(struct i2c_client *client, const struct i2c_device_id *i
 	if ( 0xA8 == data->fw_vendor_id || 0x00 == data->fw_vendor_id ) {
 		fts_ctpm_fw_upgrade_ReadVendorID(data->client, &data->fw_vendor_id);
 		gpio_direction_output(data->pdata->reset_gpio, 1);
-		msleep(3);//mdelay(1);
+		msleep(3);
 		gpio_direction_output(data->pdata->reset_gpio, 0);
-		msleep(3);//mdelay(1);
+		msleep(3);
 		gpio_direction_output(data->pdata->reset_gpio, 1);
-		msleep(40);//mdelay(1);
+		msleep(40);
 	}
 	FTS_STORE_TS_INFO(data->ts_info, data->family_id, data->pdata->name,
 	                  data->pdata->num_max_touches, data->pdata->group_id,
@@ -1802,8 +1802,8 @@ static int fts_ts_probe(struct i2c_client *client, const struct i2c_device_id *i
 
 #ifdef CONFIG_FT5XX_TGESTURE_FUNCTION
 #if FTS_GESTRUE_EN
-	//fts_Gesture_init(input_dev);
-	//init_para(720,1280,0,0,0);
+	
+	
 	ft5xx_key_dev= input_allocate_device();
 	if (! ft5xx_key_dev) {
 		dev_err(&client->dev,"[syna]SY_key_dev: fail!\n");
@@ -1821,10 +1821,10 @@ static int fts_ts_probe(struct i2c_client *client, const struct i2c_device_id *i
 #endif
 #endif
 	/**/
-	//#ifdef FTS_AUTO_UPGRADE
+	
 	printk("********************Enter CTP Auto Upgrade********************\n");
 	fts_ctpm_auto_upgrade(client,data->fw_vendor_id,data->fw_ver);
-	//#endif
+	
 
 
 
@@ -1855,7 +1855,7 @@ free_gpio:
 		gpio_free(pdata->reset_gpio);
 	if (gpio_is_valid(pdata->irq_gpio))
 		gpio_free(pdata->irq_gpio);
-//exit_create_singlethread:
+
 	printk("==singlethread error =\n");
 	i2c_set_clientdata(client, NULL);
 err_gpio_req:

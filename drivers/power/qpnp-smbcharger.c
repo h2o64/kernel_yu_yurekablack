@@ -39,7 +39,7 @@
 #include <linux/msm_bcl.h>
 #include <linux/ktime.h>
 #include "pmic-voter.h"
-#define ENABLE_SMART_CHARGING_CONTROL //enable smart charging control.
+#define ENABLE_SMART_CHARGING_CONTROL 
 bool g_do_not_support_qc=false;
 
 /* Mask/Bit helpers */
@@ -307,9 +307,9 @@ struct smbchg_chip {
 
 #ifdef ENABLE_SMART_CHARGING_CONTROL
 	int				current_speed;
-    int             target_speed;   //target speed set by app layer.
-    int             speed_current_map[SPEED_MAX];   //actual current/ma for speed level.
-    bool            speed_restoring;    //indicating if a speed restoration is in process.
+    int             target_speed;   
+    int             speed_current_map[SPEED_MAX];   
+    bool            speed_restoring;    
 	struct delayed_work		smart_charging_control_work;	
 #endif    
 
@@ -4783,13 +4783,13 @@ static void handle_usb_removal(struct smbchg_chip *chip)
 	struct power_supply *parallel_psy = get_parallel_psy(chip);
 	int rc;
 
-//caizhifu add start for tinno battery info update for debug,2016-11-29
+
 #ifdef CONFIG_TINNO_BATTERY_FG_HEART
 	printk("vbus remove triggered\n");
 #else
 	pr_smb(PR_STATUS, "triggered\n");
 #endif
-//caizhifu add end for tinno battery info update for debug,2016-11-29
+
 
 	smbchg_aicl_deglitch_wa_check(chip);
 	/* Clear the OV detected status set before */
@@ -4839,7 +4839,7 @@ static void handle_usb_removal(struct smbchg_chip *chip)
 		restore_from_hvdcp_detection(chip);
 
 #ifdef ENABLE_SMART_CHARGING_CONTROL
-    //restore charge speed when charger is removed.    
+    
     smbchg_charge_speed_restore(chip);
 #endif    
 }
@@ -4868,14 +4868,14 @@ static void handle_usb_insertion(struct smbchg_chip *chip)
 	/* usb inserted */
 	read_usb_type(chip, &usb_type_name, &usb_supply_type);
 
-//caizhifu add start for tinno battery info update for debug,2016-11-24
+
 #ifdef CONFIG_TINNO_BATTERY_FG_HEART
 	printk("vbus insert inserted type = %d (%s)", usb_supply_type, usb_type_name);
 #else
 	pr_smb(PR_STATUS,
 		"inserted type = %d (%s)", usb_supply_type, usb_type_name);
 #endif
-//caizhifu add end for tinno battery info update for debug,2016-11-24
+
 
 	smbchg_aicl_deglitch_wa_check(chip);
 	if (chip->typec_psy)

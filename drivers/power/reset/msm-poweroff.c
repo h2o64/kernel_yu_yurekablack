@@ -55,7 +55,7 @@ static void __iomem *msm_ps_hold;
 static phys_addr_t tcsr_boot_misc_detect;
 static void scm_disable_sdi(void);
 
-//zenghaihui forbid download mode for 7201 DCC
+
 #ifdef __BUILD_TYPE_USER__
 
 #if defined(CONFIG_PROJECT_GARLIC)

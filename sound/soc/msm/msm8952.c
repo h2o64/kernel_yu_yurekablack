@@ -52,11 +52,11 @@
 #define MAX_WSA_CODEC_NAME_LENGTH 80
 #define MSM_DT_MAX_PROP_SIZE 80
 
-//++ camera selfie stick TN:peter
+
 #if defined CONFIG_PROJECT_GARLIC
 #define CAMERA_SELFIE_STICK
 #endif
-//-- camera selfie stick
+
 
 enum btsco_rates {
 	RATE_8KHZ_ID,
@@ -78,16 +78,16 @@ static atomic_t quat_mi2s_clk_ref;
 static atomic_t quin_mi2s_clk_ref;
 static atomic_t auxpcm_mi2s_clk_ref;
 
-//yangliang add for external padac for spk;20150708
+
 #if defined(CONFIG_PROJECT_GARLIC)
 int ext_spk_pa_gpio = -1;
 #endif
 
 #if defined(CONFIG_PROJECT_GARLIC)
-int ext_spk_pa_gpio_compatible = -1;///yangliang add for pa compatible 20170112
+int ext_spk_pa_gpio_compatible = -1;
 #endif
 
-bool ext_spk_pa_current_state = false;//yangliang add to feedback ext pa-spk used state for insert hph of spk-voice and out hph resulting in spk-voice no downlink 20160530
+bool ext_spk_pa_current_state = false;
 static int msm8952_enable_dig_cdc_clk(struct snd_soc_codec *codec, int enable,
 					bool dapm);
 static bool msm8952_swap_gnd_mic(struct snd_soc_codec *codec);
@@ -102,7 +102,7 @@ static int msm8952_wsa_switch_event(struct snd_soc_dapm_widget *w,
  * if R/L channel impedance is larger than 5K ohm
  */
 #if defined(CONFIG_PROJECT_GARLIC)
-static struct wcd_mbhc_config mbhc_cfg = {//yangliang mask and add for garlic linear hph20160729
+static struct wcd_mbhc_config mbhc_cfg = {
 	.read_fw_bin = false,
 	.calibration = NULL,
 	.detect_extn_cable = true,
@@ -110,10 +110,10 @@ static struct wcd_mbhc_config mbhc_cfg = {//yangliang mask and add for garlic li
 	.swap_gnd_mic = NULL,
 	.hs_ext_micbias = false,
 	.key_code[0] = KEY_MEDIA,
-	//.key_code[1] = KEY_VOICECOMMAND,
+	
 	.key_code[1] = KEY_VOLUMEUP,
 	.key_code[2] = KEY_VOLUMEDOWN,
-	.key_code[3] = 0,////yangliang mask and add for garlic linear hph20160729
+	.key_code[3] = 0,
 	.key_code[4] = 0,
 	.key_code[5] = 0,
 	.key_code[6] = 0,
@@ -276,12 +276,12 @@ done:
 int is_ext_spk_gpio_support(struct platform_device *pdev,
 			struct msm8916_asoc_mach_data *pdata)
 {
-	//int ret = 0; 
+	
 	const char *spk_ext_pa = "qcom,msm-spk-ext-pa";
 	#if defined(CONFIG_PROJECT_GARLIC)
-		const char *spk_ext_pa_compatible = "qcom,msm-spk-ext-pa-compatible";///yangliang add for pa compatible20170112
+		const char *spk_ext_pa_compatible = "qcom,msm-spk-ext-pa-compatible";
 	#endif
-	//static bool ext_pa_gpio_requested = false;//yangliang add for pa mode-2;20150901	
+	
 
 	pr_debug("%s:Enter\n", __func__);
 
@@ -289,37 +289,37 @@ int is_ext_spk_gpio_support(struct platform_device *pdev,
 				spk_ext_pa, 0);
 	#if defined(CONFIG_PROJECT_GARLIC)
 		pdata->spk_ext_pa_gpio_compatible = of_get_named_gpio(pdev->dev.of_node,
-				spk_ext_pa_compatible, 0);///yangliang add for pa compatible20170112
+				spk_ext_pa_compatible, 0);
 	#endif
 	#if defined(CONFIG_PROJECT_GARLIC)
-		ext_spk_pa_gpio = pdata->spk_ext_pa_gpio;//yangliang add 
+		ext_spk_pa_gpio = pdata->spk_ext_pa_gpio;
 	#endif
 
 	#if defined(CONFIG_PROJECT_GARLIC)
-		ext_spk_pa_gpio_compatible = pdata->spk_ext_pa_gpio_compatible;//yangliang add for pa compatible20170112
+		ext_spk_pa_gpio_compatible = pdata->spk_ext_pa_gpio_compatible;
 	#endif
 
 #if defined(CONFIG_PROJECT_GARLIC)
-	if ((pdata->spk_ext_pa_gpio < 0) && (pdata->spk_ext_pa_gpio_compatible < 0)) {//yangliang add for pa compatible20170112
+	if ((pdata->spk_ext_pa_gpio < 0) && (pdata->spk_ext_pa_gpio_compatible < 0)) {
 		dev_dbg(&pdev->dev,
 			"%s: missing %s in dt node\n", __func__, spk_ext_pa);
 	} else {
-		if ((!gpio_is_valid(pdata->spk_ext_pa_gpio)) && (!gpio_is_valid(pdata->spk_ext_pa_gpio_compatible))) {//yangliang add for pa compatible20170112
+		if ((!gpio_is_valid(pdata->spk_ext_pa_gpio)) && (!gpio_is_valid(pdata->spk_ext_pa_gpio_compatible))) {
 			pr_err("%s: Invalid external speaker gpio: %d",
 				__func__, pdata->spk_ext_pa_gpio);
 			pr_err("%s: Invalid external speaker gpio compatible: %d",
-				__func__, pdata->spk_ext_pa_gpio_compatible);///yangliang add for pa compatible20170112
+				__func__, pdata->spk_ext_pa_gpio_compatible);
 			return -EINVAL;
 		}
-		gpio_direction_output(pdata->spk_ext_pa_gpio, 0); //<20160310>wangyanhui add for ext speaker--new
-		gpio_direction_output(pdata->spk_ext_pa_gpio_compatible, 0);///yangliang add for pa compatible20170112
+		gpio_direction_output(pdata->spk_ext_pa_gpio, 0); 
+		gpio_direction_output(pdata->spk_ext_pa_gpio_compatible, 0);
 	}
 #elif (!defined(CONFIG_PROJECT_GARLIC))
-	if ((pdata->spk_ext_pa_gpio < 0)) {//yangliang add for pa compatible20170112
+	if ((pdata->spk_ext_pa_gpio < 0)) {
 		dev_dbg(&pdev->dev,
 			"%s: missing %s in dt node\n", __func__, spk_ext_pa);
 	} else {
-		if ((!gpio_is_valid(pdata->spk_ext_pa_gpio)) && (!gpio_is_valid(pdata->spk_ext_pa_gpio_compatible))) {//yangliang add for pa compatible20170112
+		if ((!gpio_is_valid(pdata->spk_ext_pa_gpio)) && (!gpio_is_valid(pdata->spk_ext_pa_gpio_compatible))) {
 			pr_err("%s: Invalid external speaker gpio: %d",
 				__func__, pdata->spk_ext_pa_gpio);
 			return -EINVAL;
@@ -331,7 +331,7 @@ int is_ext_spk_gpio_support(struct platform_device *pdev,
 
 	return 0;
 }
-#ifdef CONFIG_PROJECT_P7601 //added by liuweiwei for aw89319pa
+#ifdef CONFIG_PROJECT_P7601 
 extern unsigned char AW87319_Audio_Speaker(void);
 extern unsigned char AW87319_Audio_OFF(void);
 
@@ -357,13 +357,13 @@ static int enable_spk_ext_pa(struct snd_soc_codec *codec, int enable)
 	int ret = 0;
 
 	#if defined(CONFIG_PROJECT_GARLIC)
-		int ret_compatible = 0;//yangliang add for pa compatible20170112
+		int ret_compatible = 0;
 	#endif
 	
-	static bool ext_pa_gpio_requested = false;//yangliang add for pa mode-2;20150901	
+	static bool ext_pa_gpio_requested = false;
 
 	#if defined(CONFIG_PROJECT_GARLIC)
-	static bool ext_pa_gpio_requested_compatible = false;//yangliang add for pa compatible20170112
+	static bool ext_pa_gpio_requested_compatible = false;
 	#endif
 	#if (!defined(CONFIG_PROJECT_GARLIC))
 	if (!gpio_is_valid(pdata->spk_ext_pa_gpio)) {
@@ -372,7 +372,7 @@ static int enable_spk_ext_pa(struct snd_soc_codec *codec, int enable)
 		return false;
 	}
 	#elif defined(CONFIG_PROJECT_GARLIC)
-	if ((!gpio_is_valid(pdata->spk_ext_pa_gpio)) && (!gpio_is_valid(pdata->spk_ext_pa_gpio_compatible))) {//yangliang add for pa compatible20170112 		
+	if ((!gpio_is_valid(pdata->spk_ext_pa_gpio)) && (!gpio_is_valid(pdata->spk_ext_pa_gpio_compatible))) {
 		pr_err("%s: Invalid gpio: %d\n", __func__, 			
 			pdata->spk_ext_pa_gpio);
 		pr_err("%s: Invalid gpio compatible: %d\n", __func__,
@@ -383,10 +383,10 @@ static int enable_spk_ext_pa(struct snd_soc_codec *codec, int enable)
 
 	pr_debug("%s: %s external speaker PA\n", __func__,
 		enable ? "Enable" : "Disable");
-	//pa mode 2  TN:peter
-	//gpio_set_value_cansleep(pdata->spk_ext_pa_gpio, enable);
+	
+	
 
-	//yangliang add for enable pa mode-2;20150901 requested gpio before any operations to avoid gpio_ensure_requested warning in gpiolib.c.
+	
 	pr_info("ext_pa_gpio_requested=%d\n", ext_pa_gpio_requested);
 	#if (!defined(CONFIG_PROJECT_GARLIC))
 	if(!ext_pa_gpio_requested) {
@@ -403,15 +403,15 @@ static int enable_spk_ext_pa(struct snd_soc_codec *codec, int enable)
 	pr_info("ext_pa_gpio_requested_compatible=%d\n", ext_pa_gpio_requested_compatible);
 	if((!ext_pa_gpio_requested) && (!ext_pa_gpio_requested_compatible)){
 		ret = gpio_request(pdata->spk_ext_pa_gpio, "spk_ext_pa_gpio"); 
-		ret_compatible = gpio_request(pdata->spk_ext_pa_gpio_compatible, "spk_ext_pa_gpio_compatible");///yangliang add for pa compatible20170112
-		if (ret && ret_compatible) {///yangliang add for pa compatible20170112
+		ret_compatible = gpio_request(pdata->spk_ext_pa_gpio_compatible, "spk_ext_pa_gpio_compatible");
+		if (ret && ret_compatible) {
 			pr_info("%s: gpio_request failed for spk_ext_pa_gpio.\n", 
 				__func__); 
 			goto err; 
 		}
 
 		ext_pa_gpio_requested = true;
-		ext_pa_gpio_requested_compatible = true;///yangliang add for pa compatible20170112
+		ext_pa_gpio_requested_compatible = true;
 	}
 	#endif
 
@@ -424,37 +424,37 @@ static int enable_spk_ext_pa(struct snd_soc_codec *codec, int enable)
 		}*/
 		#if defined(CONFIG_PROJECT_GARLIC)
 			printk(KERN_ERR"goto mode-2 and do compatible\n");
-			ext_spk_pa_current_state = true;//yangliang add to feedback ext pa-spk used state for insert hph of spk-voice and out hph resulting in spk-voice no downlink 20160530
-			//gpio_set_value_cansleep(pdata->spk_ext_pa_gpio, 0);		
-			//udelay(2);
+			ext_spk_pa_current_state = true;
+			
+			
 			gpio_set_value_cansleep(pdata->spk_ext_pa_gpio, 1);		
 			udelay(2);
 			gpio_set_value_cansleep(pdata->spk_ext_pa_gpio, 0);			
 			udelay(2);
 			gpio_set_value_cansleep(pdata->spk_ext_pa_gpio, 1);
 
-			///yangliang add for pa compatible20170112
+			
 			gpio_set_value_cansleep(pdata->spk_ext_pa_gpio_compatible, 1);
 			udelay(2);
 			gpio_set_value_cansleep(pdata->spk_ext_pa_gpio_compatible, 0);
 			udelay(2);
 			gpio_set_value_cansleep(pdata->spk_ext_pa_gpio_compatible, 1);
-			///yangliang add for pa compatible20170112 end
+			
 		#else
-			ext_spk_pa_current_state = true;//yangliang add to feedback ext pa-spk used state for insert hph of spk-voice and out hph resulting in spk-voice no downlink 20160530
+			ext_spk_pa_current_state = true;
 			gpio_set_value_cansleep(pdata->spk_ext_pa_gpio, enable);
 
 			#if defined(CONFIG_PROJECT_GARLIC)
-				gpio_set_value_cansleep(pdata->spk_ext_pa_gpio_compatible, enable);///yangliang add for pa compatible20170112
+				gpio_set_value_cansleep(pdata->spk_ext_pa_gpio_compatible, enable);
 			#endif
 			
 		#endif
 
 	} else {
-		ext_spk_pa_current_state = false;//yangliang add to feedback ext pa-spk used state for insert hph of spk-voice and out hph resulting in spk-voice no downlink 20160530
+		ext_spk_pa_current_state = false;
 		gpio_set_value_cansleep(pdata->spk_ext_pa_gpio, enable);
 		#if defined(CONFIG_PROJECT_GARLIC)
-			gpio_set_value_cansleep(pdata->spk_ext_pa_gpio_compatible, enable);///yangliang add for pa compatible20170112
+			gpio_set_value_cansleep(pdata->spk_ext_pa_gpio_compatible, enable);
 		#endif
 		/*ret = msm_gpioset_suspend(CLIENT_WCD_INT, "ext_spk_gpio");
 		if (ret) {

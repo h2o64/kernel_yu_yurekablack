@@ -36,7 +36,7 @@ struct gf_key_map {
 #define  GF_IOC_POWER_ON   _IO(GF_IOC_MAGIC, 9)
 #define  GF_IOC_POWER_OFF  _IO(GF_IOC_MAGIC, 10)
 #define  GF_IOC_REQUEST_IRQ  _IO(GF_IOC_MAGIC, 11)
-// release info.
+
 #define GF_IOC_RELEASEVERSION 	_IOW(GF_IOC_MAGIC, 12, char*)
 
 #define  GFX1XM_IOC_FTM	_IOW(GF_IOC_MAGIC, 101, int)
@@ -45,12 +45,12 @@ struct gf_key_map {
 
 #define  GF_IOC_MAXNR    14
 
-//#define AP_CONTROL_CLK       1
+
 /*#define  USE_PLATFORM_BUS     */
 #define  USE_SPI_BUS	1
 #define GF_FASYNC   1	/*If support fasync mechanism.*/
 #define GF_NET_EVENT_IRQ 0
-//#define GF_NETLINK_ENABLE
+
 #define GF_NET_EVENT_FB_BLACK 1
 #define GF_NET_EVENT_FB_UNBLACK 2
 
@@ -81,12 +81,12 @@ struct gf_dev {
 	struct notifier_block notifier;
 	char device_available;
 	char fb_black;
-	//TINNO BEGIN
+	
 	u8           isPowerOn;
 	struct regulator *vdd;
 	struct regulator *vio;
-	//signed fpid_gpio;
-	//TINNO END
+	
+	
 };
 
 int gf_parse_dts(struct gf_dev* gf_dev);

@@ -463,7 +463,7 @@
 				qcom,dtest-output = <1>;
 				#pwm-cells = <2>;
 				qcom,pwm {
-				qcom,duty = <500000>; //PWM duty time in microseconds 
+				qcom,duty = <500000>; 
 				label = "pwm";};
 		};
 
