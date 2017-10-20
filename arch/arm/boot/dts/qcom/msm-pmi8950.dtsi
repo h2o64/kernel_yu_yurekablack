@@ -163,8 +163,6 @@
 				qcom,pull = <1>;
 				qcom,vin-sel = <0>;
 				qcom,out-strength = <2>;
-				//add by lishengli 20160703 for fix smb be disable after long press power key to restart dievice
-				//status = "disabled";
 			};
 		};
 
@@ -208,26 +206,21 @@
 			#address-cells = <1>;
 			#size-cells = <1>;
 
-                        //add by lishengli 20160519
+                        
 			qcom,iterm-ma = <250>;
 			qcom,float-voltage-mv = <4400>;
 			qcom,resume-delta-mv = <200>;
-			//add by lishengli
 			qcom,fastchg-current-ma = <1500>;		
 			qcom,chg-inhibit-fg;
 			qcom,rparasitic-uohm = <100000>;
 			qcom,bms-psy-name = "bms";
 			qcom,thermal-mitigation = <1500 1200 1000 0>;
-			//qcom,parallel-usb-min-current-ma = <1400>;
-			//qcom,parallel-usb-9v-min-current-ma = <900>;
-			//qcom,parallel-allowed-lowering-ma = <500>;
 			qcom,pmic-revid = <&pmi8950_revid>;
 			qcom,force-aicl-rerun;
 			qcom,aicl-rerun-period-s = <180>;
 			qcom,autoadjust-vfloat;
-			//add by lishengli 20160412
-			qcom,float-voltage-comp = <13>; //4100v
-			qcom,fastchg-current-comp = <700>; //900ma
+			qcom,float-voltage-comp = <13>; 
+			qcom,fastchg-current-comp = <700>; 
 			qcom,no-parallel-defualt-dcp-icl-ma = <1400>;
 
 			qcom,speed-current = <1500 1400 1200 1100 900 700 600 450 400 0>;
@@ -333,23 +326,19 @@
 			#address-cells = <1>;
 			#size-cells = <1>;
 			qcom,fg-cc-cv-threshold-mv = <4390>;
-			//add by lishengli 20160519 
 			qcom,hold-soc-while-full;
 			qcom,vbat-estimate-diff-mv =<120>;
 			qcom,resume-soc = <98>;
 			status = "okay";
 			qcom,bcl-lm-threshold-ma = <127>;
 			qcom,bcl-mh-threshold-ma = <405>;
-			//add by lishengli 20160519   fixed can't charge to full
 			qcom,fg-iterm-ma = <300>;
-			//add by lishengli 20160519
 			qcom,fg-chg-iterm-ma = <250>;
 			qcom,pmic-revid = <&pmi8950_revid>;
 			qcom,fg-cutoff-voltage-mv = <3400>;
 			qcom,cycle-counter-en;
 			qcom,ext-sense-type;
 
-			//add by lishengli for 3430    20160412
 			qcom,thermal-coefficients =[c8 86 c1 50 d3 37];
 			qcom,capacity-learning-on;
 
@@ -430,11 +419,6 @@
 			qcom,inhibit-derating-ua = <550000>;
 		};
 
-		/*qcom,leds@a100 {
-			compatible = "qcom,leds-qpnp";
-			reg = <0xa100 0x100>;
-			label = "mpp";
-		};*/
 		qcom,leds@a100 {
 			compatible = "qcom,leds-qpnp";
 			reg = <0xa100 0x100>;
@@ -453,7 +437,7 @@
 				qcom,pwm-channel = <0>;
 				qcom,pwm-us = <5000000>;
 				pwms = <&pmi8950_pwm 0 0>;
-				pwm-names="green"; // add this
+				pwm-names="green";
 				qcom,use-blink;
 			};
 		};
@@ -465,15 +449,7 @@
 		#address-cells = <1>;
 		#size-cells = <1>;
 
-		/*pmi8950_pwm: pwm@b000 {
-			status = "disabled";
-			compatible = "qcom,qpnp-pwm";
-			reg = <0xb000 0x100>;
-			reg-names = "qpnp-lpg-channel-base";
-			qcom,channel-id = <0>;
-			qcom,supported-sizes = <6>, <9>;
-			#pwm-cells = <2>;
-		};*/
+		
 		pmi8950_pwm: pwm@b000 {
 				compatible = "qcom,qpnp-pwm";
 				reg = <0xb000 0x100>;
@@ -632,10 +608,10 @@
 				qcom,led-name = "led:flash_1";
 				qcom,default-led-trigger =
 						"flash1_trigger";
-				qcom,max-current = <1000>;   //modify current of front flash
+				qcom,max-current = <1000>;
 				qcom,duration = <1280>;
 				qcom,id = <1>;
-				qcom,current = <625>;           //modify current of front flash
+				qcom,current = <625>;    
 			};
 			pmi8950_flash2: qcom,flash_2 {
 				label = "flash";
@@ -663,9 +639,9 @@
 				qcom,led-name = "led:torch_1";
 				qcom,default-led-trigger =
 						"torch1_trigger";
-				qcom,max-current = <200>;        //modify current of front flash
+				qcom,max-current = <200>;
 				qcom,id = <1>;
-				qcom,current = <120>;                //modify current of front flash
+				qcom,current = <120>;  
 			};
 			pmi8950_torch2: qcom,torch_2 {
 				label = "torch";
@@ -704,7 +680,7 @@
 			qcom,wave-play-rate-us = <5263>;
 			qcom,actuator-type = "erm";
 			qcom,wave-shape = "square";
-			qcom,vmax-mv = <3000>; //wangyahui set 3000 //2000
+			qcom,vmax-mv = <3000>;
 			qcom,ilim-ma = <800>;
 			qcom,sc-deb-cycles = <8>;
 			qcom,int-pwm-freq-khz = <505>;

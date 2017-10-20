@@ -291,7 +291,6 @@
 		};
 
 
-               //wenguangyu, add for fingerprint
 		spi6 {
 			spi6_default: spi6_default {
 				/* active state */
@@ -486,7 +485,6 @@
 
 		};
 
-		//////////////yangliang add for pa compatible20170112//////////////
 		tlmm_gpio_compatible_control_pa {
 			gpio_key_active_compatible_control_pa: gpio_key_active_compatible_control_pa {
 				mux {
@@ -516,7 +514,6 @@
 				};
 			};
 		};
-		//////////////yangliang add for pa compatible20170112//////////////
 
 		pmx_mdss: pmx_mdss {
 			mdss_dsi_active: mdss_dsi_active {
