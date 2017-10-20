@@ -2465,34 +2465,6 @@ static struct snd_soc_dai_link msm8952_dai[] = {
 		.be_id = MSM_FRONTEND_DAI_QCHAT,
 	},
 
-	#if defined(CONFIG_PROJECT_I9051) || defined(CONFIG_PROJECT_P6901) //yangliang add for smartpa 20161008
-	#if 1
-	{ /* hw:x,37 */
-		.name = "QUIN_MI2S Hostless",
-		.stream_name = "QUIN_MI2S Hostless",
-		.cpu_dai_name = "QUIN_MI2S_RX_HOSTLESS",
-		.platform_name = "msm-pcm-hostless",
-		.dynamic = 1,
-		.dpcm_playback = 1,//yangliang add 20161025
-		.trigger = {SND_SOC_DPCM_TRIGGER_POST,
-			SND_SOC_DPCM_TRIGGER_POST},
-		.no_host_mode = SND_SOC_DAI_LINK_NO_HOST,
-		.ignore_suspend = 1,
-		/* this dainlink has playback support */
-		.ignore_pmdown_time = 1,
-		/* tfa98xx: nxp smart pa for speaker */
-		
-		#if defined(CONFIG_PROJECT_I9051)
-		.codec_dai_name = "tfa98xx-aif-8-34",//"tfa98xx_codec",yangliang change old name to new name;20161026
-		.codec_name = "tfa98xx.8-0034",//it is from tfa98xx.c tfa98xx_i2c_driver`s  .name = "tfa98xx",  ;yangliang
-		#elif defined(CONFIG_PROJECT_P6901)
-		.codec_dai_name = "tfa98xx-aif-2-34",//"tfa98xx_codec",yangliang change old name to new name;20161026
-		.codec_name = "tfa98xx.2-0034",//it is from tfa98xx.c tfa98xx_i2c_driver`s  .name = "tfa98xx",  ;yangliang
-		#endif
-	},
-	#endif
-	#endif
-
 	/* Backend I2S DAI Links */
 	{
 		.name = LPASS_BE_PRI_MI2S_RX,
@@ -2775,33 +2747,6 @@ static struct snd_soc_dai_link msm8952_hdmi_dba_dai_link[] = {
 };
 
 static struct snd_soc_dai_link msm8952_quin_dai_link[] = {
-	#if defined(CONFIG_PROJECT_I9051) || defined(CONFIG_PROJECT_P6901) //yangliang add for smartpa 20161008
-		#if 1
-	{
-		.name = LPASS_BE_QUIN_MI2S_RX,
-		.stream_name = "Quinary MI2S Playback",
-		.cpu_dai_name = "msm-dai-q6-mi2s.5",
-		.platform_name = "msm-pcm-routing",
-
-		#if defined(CONFIG_PROJECT_I9051)
-		.codec_dai_name = "tfa98xx-aif-8-34",//"tfa98xx_codec",yangliang change old name to new name;20161026
-		.codec_name = "tfa98xx.8-0034",//it is from tfa98xx.c tfa98xx_i2c_driver`s  .name = "tfa98xx",  ;yangliang
-		#elif defined(CONFIG_PROJECT_P6901)
-		.codec_dai_name = "tfa98xx-aif-2-34",//"tfa98xx_codec",yangliang change old name to new name;20161026
-		.codec_name = "tfa98xx.2-0034",//it is from tfa98xx.c tfa98xx_i2c_driver`s  .name = "tfa98xx",  ;yangliang
-		#endif
-		
-		.no_pcm = 1,
-		.dpcm_playback = 1,//yangliang add for test from qualcomm songjingping20161025
-		.dai_fmt = SND_SOC_DAIFMT_I2S | SND_SOC_DAIFMT_CBS_CFS,
-		.be_id = MSM_BACKEND_DAI_QUINARY_MI2S_RX,
-		.be_hw_params_fixup = msm_mi2s_rx_be_hw_params_fixup,
-		.ops = &msm8952_quin_mi2s_be_ops,
-		.ignore_pmdown_time = 1, /* dai link has playback support */
-		.ignore_suspend = 1,
-	},
-		#endif
-	#else
 	{
 		.name = LPASS_BE_QUIN_MI2S_RX,
 		.stream_name = "Quinary MI2S Playback",
@@ -2817,7 +2762,6 @@ static struct snd_soc_dai_link msm8952_quin_dai_link[] = {
 		.ignore_pmdown_time = 1, /* dai link has playback support */
 		.ignore_suspend = 1,
 	},
-	#endif
 };
 
 static struct snd_soc_dai_link msm8952_split_a2dp_dai_link[] = {

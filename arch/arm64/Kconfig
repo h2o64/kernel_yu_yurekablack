@@ -1060,12 +1060,4 @@ source "arch/arm64/mm/Kconfig"
 config PROJECT_GARLIC
 	tristate "project support"
 	help
-	  This option enables support project name  
-
-config TINNO_ROOT_PROTECT
-bool "for tinno root protect "
-default n
-
-config TINNO_PRINTK_UART
-bool "for tinno product printk uart dts build"
-default n
+	  This option enables support project name

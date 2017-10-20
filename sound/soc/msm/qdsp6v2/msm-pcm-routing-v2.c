@@ -48,15 +48,6 @@
 
 static int get_cal_path(int path_type);
 
-#if  !defined(CONFIG_PROJECT_I9051) || !defined(CONFIG_PROJECT_P6901)
-//yangliang mask and add for msm8953 the EC ref port should be set before setting up the voice path 20160919
-#define EC_PORT_ID_PRIMARY_MI2S_TX    1
-#define EC_PORT_ID_SECONDARY_MI2S_TX  2
-#define EC_PORT_ID_TERTIARY_MI2S_TX   3
-#define EC_PORT_ID_QUATERNARY_MI2S_TX 4
-#define EC_PORT_ID_SLIMBUS_1_TX       5
-#endif
-
 static struct mutex routing_lock;
 
 static struct cal_type_data *cal_data;
@@ -71,23 +62,10 @@ static int fm_pcmrx_switch_enable;
 static int lsm_mux_slim_port;
 static int slim0_rx_aanc_fb_port;
 
-#if defined(CONFIG_PROJECT_I9051) || defined(CONFIG_PROJECT_P6901)
-//yangliang mask and add for msm8953 the EC ref port should be set before setting up the voice path 20160919
-//static int msm_route_ec_ref_rx = 9; /* NONE */
-static int msm_route_ec_ref_rx;
-#else
 static int msm_route_ec_ref_rx = 9; /* NONE */
-#endif
 
 static uint32_t voc_session_id = ALL_SESSION_VSID;
-
-#if defined(CONFIG_PROJECT_I9051) || defined(CONFIG_PROJECT_P6901)
-//yangliang mask and add for msm8953 the EC ref port should be set before setting up the voice path 20160919
-//static int msm_route_ext_ec_ref = AFE_PORT_INVALID;
-static int msm_route_ext_ec_ref;
-#else
 static int msm_route_ext_ec_ref = AFE_PORT_INVALID;
-#endif
 
 static bool is_custom_stereo_on;
 static bool is_ds2_on;
@@ -2158,82 +2136,6 @@ static int msm_routing_ext_ec_get(struct snd_kcontrol *kcontrol,
 	return 0;
 }
 
-#if defined(CONFIG_PROJECT_I9051) || defined(CONFIG_PROJECT_P6901)
-//yangliang mask and add for msm8953 the EC ref port should be set before setting up the voice path 20160919
-static int msm_routing_ext_ec_put(struct snd_kcontrol *kcontrol,
-				  struct snd_ctl_elem_value *ucontrol)
-{
-	struct snd_soc_dapm_widget_list *wlist =
-					dapm_kcontrol_get_wlist(kcontrol);
-	struct snd_soc_dapm_widget *widget = wlist->widgets[0];
-	int mux = ucontrol->value.enumerated.item[0];
-	struct soc_enum *e = (struct soc_enum *)kcontrol->private_value;
-
-	int ret = 1;
-	bool state = true;
-	uint16_t ext_ec_ref_port_id;
-
-	struct snd_soc_dapm_update *update = NULL;
-
-	pr_debug("%s: msm_route_ec_ref_rx = %d value = %ld\n",
-		 __func__, msm_route_ext_ec_ref,
-		 ucontrol->value.integer.value[0]);
-	if (mux >= e->items) {
-		pr_err("%s: Invalid mux value %d\n", __func__, mux);
-		return -EINVAL;
-	}
-
-	mutex_lock(&routing_lock);
-	msm_route_ext_ec_ref = ucontrol->value.integer.value[0];
-
-	switch (msm_route_ext_ec_ref) {
-	case EXT_EC_REF_PRI_MI2S_TX:
-		ext_ec_ref_port_id = AFE_PORT_ID_PRIMARY_MI2S_TX;
-		break;
-	case EXT_EC_REF_SEC_MI2S_TX:
-		ext_ec_ref_port_id = AFE_PORT_ID_SECONDARY_MI2S_TX;
-		break;
-	case EXT_EC_REF_TERT_MI2S_TX:
-		ext_ec_ref_port_id = AFE_PORT_ID_TERTIARY_MI2S_TX;
-		break;
-	case EXT_EC_REF_QUAT_MI2S_TX:
-		ext_ec_ref_port_id = AFE_PORT_ID_QUATERNARY_MI2S_TX;
-		break;
-	case EXT_EC_REF_QUIN_MI2S_TX:
-		ext_ec_ref_port_id = AFE_PORT_ID_QUINARY_MI2S_TX;
-		break;
-	case EXT_EC_REF_SLIM_1_TX:
-		ext_ec_ref_port_id = SLIMBUS_1_TX;
-		break;
-	case EXT_EC_REF_NONE:
-	default:
-		ext_ec_ref_port_id = AFE_PORT_INVALID;
-		state = false;
-		break;
-	}
-
-	pr_debug("%s: val = %d ext_ec_ref_port_id = 0x%0x state = %d\n",
-		__func__, msm_route_ext_ec_ref, ext_ec_ref_port_id, state);
-
-	if (!voc_set_ext_ec_ref(ext_ec_ref_port_id, state)) {
-		mutex_unlock(&routing_lock);
-		snd_soc_dapm_mux_update_power(widget->dapm, kcontrol, mux, e, update);
-	} else {
-		ret = -EINVAL;
-		mutex_unlock(&routing_lock);
-	}
-	return ret;
-}
-
-static const char * const ext_ec_ref_rx[] = {"NONE", "PRI_MI2S_TX",
-					"SEC_MI2S_TX", "TERT_MI2S_TX",
-					"QUAT_MI2S_TX", "QUIN_MI2S_TX",
-					"SLIM_1_TX"};
-
-static const struct soc_enum msm_route_ext_ec_ref_rx_enum[] = {
-	SOC_ENUM_SINGLE_EXT(ARRAY_SIZE(ext_ec_ref_rx), ext_ec_ref_rx),
-};
-#else
 static int msm_routing_ext_ec_put(struct snd_kcontrol *kcontrol,
 				  struct snd_ctl_elem_value *ucontrol)
 {
@@ -2293,7 +2195,6 @@ static const char * const ext_ec_ref_rx[] = {"NONE", "PRI_MI2S_TX",
 static const struct soc_enum msm_route_ext_ec_ref_rx_enum[] = {
 	SOC_ENUM_SINGLE_EXT(6, ext_ec_ref_rx),
 };
-#endif
 
 static const struct snd_kcontrol_new voc_ext_ec_mux =
 	SOC_DAPM_ENUM_EXT("VOC_EXT_EC MUX Mux", msm_route_ext_ec_ref_rx_enum[0],
@@ -5336,36 +5237,6 @@ static const struct snd_kcontrol_new quat_mi2s_rx_port_mixer_controls[] = {
 	msm_routing_put_port_mixer),
 };
 
-#if defined(CONFIG_PROJECT_I9051) || defined(CONFIG_PROJECT_P6901) //yangliang add for smartpa 20160921
-static const struct snd_kcontrol_new quin_mi2s_rx_port_mixer_controls[] = {
-	SOC_SINGLE_EXT("PRI_MI2S_TX", MSM_BACKEND_DAI_QUINARY_MI2S_RX,
-	MSM_BACKEND_DAI_PRI_MI2S_TX, 1, 0, msm_routing_get_port_mixer,
-	msm_routing_put_port_mixer),
-	SOC_SINGLE_EXT("TERT_MI2S_TX", MSM_BACKEND_DAI_QUINARY_MI2S_RX,
-	MSM_BACKEND_DAI_TERTIARY_MI2S_TX, 1, 0, msm_routing_get_port_mixer,
-	msm_routing_put_port_mixer),
-	SOC_SINGLE_EXT("INTERNAL_FM_TX", MSM_BACKEND_DAI_QUINARY_MI2S_RX,
-	MSM_BACKEND_DAI_INT_FM_TX, 1, 0, msm_routing_get_port_mixer,
-	msm_routing_put_port_mixer),
-	SOC_SINGLE_EXT("AUX_PCM_UL_TX", MSM_BACKEND_DAI_QUINARY_MI2S_RX,
-	MSM_BACKEND_DAI_AUXPCM_TX, 1, 0, msm_routing_get_port_mixer,
-	msm_routing_put_port_mixer),
-	SOC_SINGLE_EXT("SLIM_0_TX", MSM_BACKEND_DAI_QUINARY_MI2S_RX,
-	MSM_BACKEND_DAI_SLIMBUS_0_TX, 1, 0, msm_routing_get_port_mixer,
-	msm_routing_put_port_mixer),
-	SOC_SINGLE_EXT("SEC_MI2S_TX", MSM_BACKEND_DAI_QUINARY_MI2S_RX,
-	MSM_BACKEND_DAI_SECONDARY_MI2S_TX, 1, 0, msm_routing_get_port_mixer,
-	msm_routing_put_port_mixer),
-	SOC_SINGLE_EXT("QUAT_MI2S_TX", MSM_BACKEND_DAI_QUINARY_MI2S_RX,
-	MSM_BACKEND_DAI_QUATERNARY_MI2S_TX, 1, 0, msm_routing_get_port_mixer,
-	msm_routing_put_port_mixer),
-
-	SOC_SINGLE_EXT("QUIN_MI2S_TX", MSM_BACKEND_DAI_QUINARY_MI2S_RX,
-	MSM_BACKEND_DAI_QUINARY_MI2S_TX, 1, 0, msm_routing_get_port_mixer,
-	msm_routing_put_port_mixer),
-};
-#endif
-
 static const struct snd_kcontrol_new tert_tdm_rx_0_port_mixer_controls[] = {
 	SOC_SINGLE_EXT("PRI_MI2S_TX", MSM_BACKEND_DAI_TERT_TDM_RX_0,
 		MSM_BACKEND_DAI_PRI_MI2S_TX, 1, 0,
@@ -5987,14 +5858,6 @@ static const struct snd_kcontrol_new quat_mi2s_rx_switch_mixer_controls =
 	SOC_SINGLE_EXT("Switch", SND_SOC_NOPM,
 	0, 1, 0, msm_routing_get_quat_mi2s_switch_mixer,
 	msm_routing_put_quat_mi2s_switch_mixer);
-
-//<BEGIN><FFBAKK-105><2015.02.27>add for fm-speaker;yangliang
-#if defined(CONFIG_PROJECT_I9051) || defined(CONFIG_PROJECT_P6901) //yangliang add for smartpa 20160922
-static const struct snd_kcontrol_new quin_mi2s_rx_switch_mixer_controls =
-	SOC_SINGLE_EXT("Switch", SND_SOC_NOPM,
-	0, 1, 0, msm_routing_get_switch_mixer,
-	msm_routing_put_switch_mixer);
-#endif
 
 static const struct snd_kcontrol_new hfp_pri_aux_switch_mixer_controls =
 	SOC_SINGLE_EXT("Switch", SND_SOC_NOPM,
@@ -6912,13 +6775,6 @@ static const struct snd_soc_dapm_widget msm_qdsp6_widgets[] = {
 		"Quaternary MI2S_RX Hostless Playback",
 		0, 0, 0, 0),
 
-	//<BEGIN><FFBAKK-105><2015.02.27>add for fm-speaker;yangliang
-	#if  defined(CONFIG_PROJECT_I9051) || defined(CONFIG_PROJECT_P6901)
-	SND_SOC_DAPM_AIF_IN("QUIN_MI2S_DL_HL",
-		"Quinary MI2S_RX Hostless Playback",
-		0, 0, 0, 0),
-	#endif
-
 	SND_SOC_DAPM_AIF_IN("AUXPCM_DL_HL", "AUXPCM_HOSTLESS Playback",
 		0, 0, 0, 0),
 	SND_SOC_DAPM_AIF_OUT("AUXPCM_UL_HL", "AUXPCM_HOSTLESS Capture",
@@ -7395,14 +7251,7 @@ static const struct snd_soc_dapm_widget msm_qdsp6_widgets[] = {
 	SND_SOC_DAPM_SWITCH("TERT_MI2S_RX_DL_HL", SND_SOC_NOPM, 0, 0,
 				&tert_mi2s_rx_switch_mixer_controls),
 	SND_SOC_DAPM_SWITCH("QUAT_MI2S_RX_DL_HL", SND_SOC_NOPM, 0, 0,
-				&quat_mi2s_rx_switch_mixer_controls),
-
-	//<BEGIN><FFBAKK-105><2015.02.27>add for fm-speaker;yangliang
-	#if defined(CONFIG_PROJECT_I9051) || defined(CONFIG_PROJECT_P6901)
-	SND_SOC_DAPM_SWITCH("QUIN_MI2S_RX_DL_HL", SND_SOC_NOPM, 0, 0,
-				&quin_mi2s_rx_switch_mixer_controls),
-	#endif
-	
+				&quat_mi2s_rx_switch_mixer_controls),	
 	SND_SOC_DAPM_SWITCH("HFP_PRI_AUX_UL_HL", SND_SOC_NOPM, 0, 0,
 				&hfp_pri_aux_switch_mixer_controls),
 	SND_SOC_DAPM_SWITCH("HFP_AUX_UL_HL", SND_SOC_NOPM, 0, 0,
@@ -7667,12 +7516,6 @@ static const struct snd_soc_dapm_widget msm_qdsp6_widgets[] = {
 	SND_SOC_DAPM_MIXER("QUAT_MI2S_RX Port Mixer", SND_SOC_NOPM, 0, 0,
 	quat_mi2s_rx_port_mixer_controls,
 	ARRAY_SIZE(quat_mi2s_rx_port_mixer_controls)),
-
-	#if defined(CONFIG_PROJECT_I9051) || defined(CONFIG_PROJECT_P6901) //yangliang add for smartpa 20160921
-	SND_SOC_DAPM_MIXER("QUIN_MI2S_RX Port Mixer", SND_SOC_NOPM, 0, 0,
-	quin_mi2s_rx_port_mixer_controls,
-	ARRAY_SIZE(quin_mi2s_rx_port_mixer_controls)),
-	#endif
 	
 	SND_SOC_DAPM_MIXER("TERT_TDM_RX_0 Port Mixer", SND_SOC_NOPM, 0, 0,
 	tert_tdm_rx_0_port_mixer_controls,
@@ -8843,14 +8686,6 @@ static const struct snd_soc_dapm_route intercon[] = {
 
 	{"QUAT_MI2S_RX_DL_HL", "Switch", "QUAT_MI2S_DL_HL"},
 	{"QUAT_MI2S_RX", NULL, "QUAT_MI2S_RX_DL_HL"},
-
-	#if defined(CONFIG_PROJECT_I9051) || defined(CONFIG_PROJECT_P6901) //yangliang add for smartpa fm-spk 20160922
-	//<BEGIN><FFBAKK-105><2015.02.27>add for fm-speaker;yangliang
-	//<BEGIN><JABAL-105><2015.03.18>add for fm-speaker and touchsound;yangliang
-	//{"QUAT_MI2S_RX_DL_HL", "Switch", "QUAT_MI2S_DL_HL"},
-	{"QUIN_MI2S_RX_DL_HL", "Switch", "PRI_MI2S_DL_HL"},
-	{"QUIN_MI2S_RX", NULL, "QUIN_MI2S_RX_DL_HL"},
-	#endif
 	
 	{"MI2S_UL_HL", NULL, "TERT_MI2S_TX"},
 	{"TERT_MI2S_UL_HL", NULL, "TERT_MI2S_TX"},
@@ -9169,11 +9004,6 @@ static const struct snd_soc_dapm_route intercon[] = {
 	{"QUAT_MI2S_RX Port Mixer", "QUAT_MI2S_TX", "QUAT_MI2S_TX"},
 	{"QUAT_MI2S_RX Port Mixer", "SLIM_0_TX", "SLIMBUS_0_TX"},
 	{"QUAT_MI2S_RX Port Mixer", "INTERNAL_FM_TX", "INT_FM_TX"},
-
-	#if defined(CONFIG_PROJECT_I9051) || defined(CONFIG_PROJECT_P6901) //yangliang add for smartpa fm-spk 20160922
-	{"QUIN_MI2S_RX Port Mixer", "INTERNAL_FM_TX", "INT_FM_TX"},//<BEGIN><FFBAKK-105><2015.02.27>add for fm-speaker;yangliang
-	#endif
-	
 	{"QUAT_MI2S_RX Port Mixer", "AUX_PCM_UL_TX", "AUX_PCM_TX"},
 	{"QUAT_MI2S_RX", NULL, "QUAT_MI2S_RX Port Mixer"},
 
@@ -9248,11 +9078,6 @@ static const struct snd_soc_dapm_route intercon[] = {
 	{"INCALL_RECORD_RX", NULL, "BE_IN"},
 	{"SLIM0_RX_VI_FB_LCH_MUX", "SLIM4_TX", "SLIMBUS_4_TX"},
 	{"SLIM0_RX_VI_FB_RCH_MUX", "SLIM4_TX", "SLIMBUS_4_TX"},
-	
-#if !defined(CONFIG_PROJECT_I9051) || !defined(CONFIG_PROJECT_P6901)
-//yangliang mask and add for msm8953 the EC ref port should be set before setting up the voice path 20160919
-	{"PRI_MI2S_RX_VI_FB_MUX", "SENARY_TX", "SENARY_TX"},//yangliang the EC ref port should be set before setting up the voice path;yangliang20160919
-#endif
 	{"SLIMBUS_0_RX", NULL, "SLIM0_RX_VI_FB_LCH_MUX"},
 	{"SLIMBUS_0_RX", NULL, "SLIM0_RX_VI_FB_RCH_MUX"},
 	{"PRI_MI2S_RX", NULL, "PRI_MI2S_RX_VI_FB_MUX"},
