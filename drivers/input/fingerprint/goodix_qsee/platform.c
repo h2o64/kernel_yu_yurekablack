@@ -65,7 +65,7 @@ int gf_parse_dts(struct gf_dev* gf_dev)
 	}
 	gpio_direction_input(gf_dev->irq_gpio);
 
-	
+
 	gpio_direction_output(gf_dev->pwr_gpio, 1);
 
 	return 0;
@@ -75,7 +75,7 @@ int gf_parse_dts(struct gf_dev* gf_dev)
 int gf_parse_dts(struct gf_dev* gf_dev)
 {
 	int rc = 0;
-	
+
 
 	/*get irq resourece*/
 	gf_dev->irq_gpio = of_get_named_gpio(gf_dev->spi->dev.of_node,"qcom,irq-gpio",0);
@@ -91,7 +91,7 @@ int gf_parse_dts(struct gf_dev* gf_dev)
 		return -EIO;
 
 	}
-	
+
 	pinctrl_gpio_direction_input(gf_dev->irq_gpio);
 
 #if 0
@@ -133,7 +133,7 @@ int gf_parse_dts(struct gf_dev* gf_dev)
 		return -EIO;
 	}
 
-	
+
 	/*gf_dev->fpid_gpio = of_get_named_gpio(gf_dev->spi->dev.of_node,"qcom,fpid-gpio",0);
 	   pr_warn("gf:get fpid gpio gf_dev->fpid_gpio = %d\n", gf_dev->fpid_gpio);
 	if (gpio_is_valid(gf_dev->fpid_gpio)){
@@ -149,7 +149,7 @@ int gf_parse_dts(struct gf_dev* gf_dev)
 		pr_warn("gf:not valid fpid gpio\n");
 		return -EIO;
 	}*/
-	
+
 	/*get pw resource*/
 #if 0
 	gf_dev->pw_gpio = of_get_named_gpio(gf_dev->spi->dev.of_node,"gf,power-gpio",0);
@@ -212,7 +212,7 @@ int gf_power_on(struct gf_dev* gf_dev)
 
 	rc = gf_power_ctl(gf_dev, true);
 
-	
+
 
 	return rc;
 
@@ -234,7 +234,7 @@ int gf_power_off(struct gf_dev* gf_dev)
 
 	rc = gf_power_ctl(gf_dev, false);
 
-	
+
 
 	return rc;
 

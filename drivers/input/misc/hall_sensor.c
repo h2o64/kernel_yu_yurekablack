@@ -54,8 +54,7 @@ static int g_hall_state = 0;
 
 static  void sendevent(int status ,struct input_dev *dev_input)
 {
-	if(status == 1)
-	{
+	if(status == 1) {
 #ifdef CONFIG_SWITCH
 		switch_set_state(&hall_sensor_data, 1);
 #endif
@@ -63,9 +62,8 @@ static  void sendevent(int status ,struct input_dev *dev_input)
 		input_report_key(dev_input, KEY_HALLOPEN, 0);
 		pr_info("sendevent : KEY_HALLOPEN = %d,  set g_hall_state = 1 to ftm, meaning open \n", KEY_HALLOPEN);
 
-		g_hall_state = 1; 
-	}
-	else {
+		g_hall_state = 1;
+	} else {
 #ifdef CONFIG_SWITCH
 		switch_set_state(&hall_sensor_data, 0);
 #endif
@@ -73,7 +71,7 @@ static  void sendevent(int status ,struct input_dev *dev_input)
 		pr_info("sendevent : KEY_HALLCLOSE = %d,  set g_hall_state = 0 to ftm, meaning cover  \n", KEY_HALLCLOSE);
 		input_report_key(dev_input, KEY_HALLCLOSE, 1);
 		input_report_key(dev_input, KEY_HALLCLOSE, 0);
-		g_hall_state = 0; 
+		g_hall_state = 0;
 	}
 
 	input_sync(dev_input);
@@ -123,8 +121,8 @@ static int hall_input_init(struct platform_device *pdev,
 	}
 	data->hall_dev->name = LID_DEV_NAME;
 	data->hall_dev->phys = HALL_INPUT;
-	
-	
+
+
 	__set_bit(KEY_HALLOPEN , data->hall_dev->keybit);
 	__set_bit(KEY_HALLCLOSE , data->hall_dev->keybit);
 	__set_bit(EV_KEY, data->hall_dev->evbit);
@@ -271,7 +269,7 @@ static int hall_driver_probe(struct platform_device *dev)
 	struct hall_data *data;
 	int err = 0;
 	int irq_flags;
-	int ret = 0; 
+	int ret = 0;
 
 	dev_dbg(&dev->dev, "hall_driver probe\n");
 	data = devm_kzalloc(&dev->dev, sizeof(struct hall_data), GFP_KERNEL);
@@ -296,7 +294,7 @@ static int hall_driver_probe(struct platform_device *dev)
 		goto exit;
 	}
 
-	
+
 #ifdef CONFIG_SWITCH
 	ret = switch_dev_register(&hall_sensor_data);
 	if (ret < 0) {
@@ -332,7 +330,7 @@ static int hall_driver_probe(struct platform_device *dev)
 		dev_err(&dev->dev, "request irq failed : %d\n", data->irq);
 		goto free_gpio;
 	} else {
-		
+
 		int value;
 		enable_irq_wake(data->irq);
 		value = gpio_get_value_cansleep(data->gpio);
@@ -385,7 +383,7 @@ static int hall_driver_remove(struct platform_device *dev)
 	hall_set_regulator(dev, false);
 	hall_config_regulator(dev, false);
 
-	
+
 #ifdef CONFIG_SWITCH
 	switch_dev_unregister(&hall_sensor_data);
 #endif

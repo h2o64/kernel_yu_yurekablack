@@ -64,13 +64,13 @@ void nl_data_ready(struct sk_buff *__skb)
 		memcpy(str, NLMSG_DATA(nlh), sizeof(str));
 		pid = nlh->nlmsg_pid;
 		printk("Message pid %d received:%s\n",pid, str) ;
-		
-		
-		
-		
-		
-		
-		
+
+
+
+
+
+
+
 		kfree_skb(skb);
 	}
 
@@ -85,7 +85,7 @@ int netlink_init(void)
 	netlink_cfg.flags = 0;
 	netlink_cfg.input = nl_data_ready;
 	netlink_cfg.cb_mutex = NULL;
-	
+
 
 	nl_sk = netlink_kernel_create(&init_net, NETLINK_TEST,
 	                              &netlink_cfg);

@@ -59,7 +59,7 @@
 #include "../fp_drv/fp_drv.h"
 
 
-#define GF_SPIDEV_NAME     "qcom,fingerprint" 
+#define GF_SPIDEV_NAME     "qcom,fingerprint"
 
 /*device name after register in charater*/
 #define GF_DEV_NAME            "goodix_fp"
@@ -304,7 +304,7 @@ static long gf_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
 	int retval = 0;
 	u32 tmp = 0;
 	int irq_err = -1;
-	
+
 #ifdef AP_CONTROL_CLK
 	unsigned int speed = 0;
 #endif
@@ -355,9 +355,9 @@ static long gf_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
 #endif
 		break;
 	case GF_IOC_RESET:
-		
-		
-		
+
+
+
 		gf_hw_reset(gf_dev, 70);
 		/*}
 		else
@@ -383,9 +383,9 @@ static long gf_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
 		        gf_key.key, gf_key.value);
 
 		if (gf_key.value  == 1) {
-			ftm_gfx_irq_state = 0x1; 
+			ftm_gfx_irq_state = 0x1;
 		} else if(gf_key.value  == 0) {
-			ftm_gfx_irq_state = 0x2; 
+			ftm_gfx_irq_state = 0x2;
 		}
 		ftm_gfx_irq_send_key = 1;
 		wake_up(&gf_poll_wq);

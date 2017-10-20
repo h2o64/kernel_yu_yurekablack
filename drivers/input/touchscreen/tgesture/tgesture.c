@@ -54,7 +54,7 @@ u8 gTGesture = 0;
 static int enable_key = 1;
 
 
-static s32 tgesture_state = 1; 
+static s32 tgesture_state = 1;
 int  bEnTGesture = 0;
 char Tg_buf[16]= {"-1"};
 static int TGesture_probe(struct platform_device *pdev);
@@ -141,7 +141,7 @@ static ssize_t TGesture_config_read_proc(struct file *file, char __user *page, s
 	char *ptr = page;
 
 
-	if (*ppos) { 
+	if (*ppos) {
 		return 0;
 	}
 	printk("TGesture1:%d\n",gTGesture);
@@ -152,7 +152,7 @@ static ssize_t TGesture_config_read_proc(struct file *file, char __user *page, s
 }
 static ssize_t TGesture_config_write_proc(struct file *filp, const char __user *buffer, size_t count, loff_t *off)
 {
-	
+
 
 	TGESTURE_DEBUG_FUNC("====LGC=========TGesture_config_write_procwrite count %d\n", count);
 
@@ -165,7 +165,7 @@ static ssize_t TGesture_config_write_proc(struct file *filp, const char __user *
 		TGESTURE_DEBUG_FUNC("copy from user fail\n");
 		return -EFAULT;
 	}
-	
+
 
 	if(atomic_read(&tp_write_flag)) {
 		atomic_set(&tp_write_flag,0);
@@ -173,7 +173,7 @@ static ssize_t TGesture_config_write_proc(struct file *filp, const char __user *
 		printk("===== TGesture_config_write_proc%d=====",bEnTGesture);
 		atomic_set(&tp_write_flag,1);
 	}
-	
+
 	/*   ret = gtp_send_cfg(i2c_client_point);
 	   abs_x_max = (config[RESOLUTION_LOC + 1] << 8) + config[RESOLUTION_LOC];
 	   abs_y_max = (config[RESOLUTION_LOC + 3] << 8) + config[RESOLUTION_LOC + 2];
@@ -236,7 +236,7 @@ static int TGesture_probe(struct platform_device *pdev)
 		printk("create attribute err = %d\n", err);
 		return 0;
 	}
-	
+
 	tgesture_config_proc = proc_create(TGesture_CONFIG_PROC_FILE, 0666, NULL, &config_proc_ops);
 	if (tgesture_config_proc == NULL) {
 		TGESTURE_DEBUG_FUNC("create_proc_entry %s failed\n", TGesture_CONFIG_PROC_FILE);

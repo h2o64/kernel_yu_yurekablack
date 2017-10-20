@@ -425,7 +425,7 @@ static void fts_report_value(struct fts_ts_data *data)
 		if (event->au8_touch_event[i] == FTS_TOUCH_DOWN || event->au8_touch_event[i] == FTS_TOUCH_CONTACT) {
 			input_mt_report_slot_state(data->input_dev, MT_TOOL_FINGER, true);
 			input_report_abs(data->input_dev, ABS_MT_TOUCH_MAJOR, event->area[i]);
-			
+
 			input_report_abs(data->input_dev, ABS_MT_POSITION_X, event->au16_x[i]);
 			input_report_abs(data->input_dev, ABS_MT_POSITION_Y, event->au16_y[i]);
 			touchs |= BIT(event->au8_finger_id[i]);
@@ -809,11 +809,11 @@ static int fts_ts_stop(struct device *dev)
 	input_mt_report_pointer_emulation(data->input_dev, false);
 	input_sync(data->input_dev);
 #if defined(CONFIG_PROJECT_GARLIC)
-	
+
 	txbuf[0] = FTS_REG_PMODE;
 	txbuf[1] = FTS_PMODE_HIBERNATE;
 	fts_i2c_write(data->client, txbuf, sizeof(txbuf));
-	
+
 #else
 	if (!gpio_is_valid(data->pdata->reset_gpio)) {
 		txbuf[0] = FTS_REG_PMODE;
@@ -1013,7 +1013,7 @@ int fts_ts_resume(struct device *dev)
 			}
 #endif
 		}
-		msleep(data->pdata->soft_rst_dly); 
+		msleep(data->pdata->soft_rst_dly);
 		return 0;
 	}
 #endif
@@ -1609,11 +1609,11 @@ static int fts_ts_probe(struct i2c_client *client, const struct i2c_device_id *i
 	__set_bit(INPUT_PROP_DIRECT, input_dev->propbit);
 
 	input_mt_init_slots(input_dev, pdata->num_max_touches,0);
-	
+
 	input_set_abs_params(input_dev, ABS_MT_POSITION_X, pdata->x_min, pdata->x_max, 0, 0);
 	input_set_abs_params(input_dev, ABS_MT_POSITION_Y, pdata->y_min, pdata->y_max, 0, 0);
 	input_set_abs_params(input_dev, ABS_MT_TOUCH_MAJOR, 0, 0x0f, 0, 0);
-	
+
 
 	err = input_register_device(input_dev);
 	if (err) {
@@ -1802,8 +1802,8 @@ static int fts_ts_probe(struct i2c_client *client, const struct i2c_device_id *i
 
 #ifdef CONFIG_FT5XX_TGESTURE_FUNCTION
 #if FTS_GESTRUE_EN
-	
-	
+
+
 	ft5xx_key_dev= input_allocate_device();
 	if (! ft5xx_key_dev) {
 		dev_err(&client->dev,"[syna]SY_key_dev: fail!\n");
@@ -1821,10 +1821,10 @@ static int fts_ts_probe(struct i2c_client *client, const struct i2c_device_id *i
 #endif
 #endif
 	/**/
-	
+
 	printk("********************Enter CTP Auto Upgrade********************\n");
 	fts_ctpm_auto_upgrade(client,data->fw_vendor_id,data->fw_ver);
-	
+
 
 
 

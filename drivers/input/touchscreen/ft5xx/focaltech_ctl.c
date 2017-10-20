@@ -50,7 +50,7 @@
 typedef struct fts_rw_i2c {
 	u8 *buf;
 	u8 flag;	/*0-write 1-read*/
-	__u16 length; 
+	__u16 length;
 }*pfts_rw_i2c;
 
 typedef struct fts_rw_i2c_queue {
