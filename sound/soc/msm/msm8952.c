@@ -52,12 +52,6 @@
 #define MAX_WSA_CODEC_NAME_LENGTH 80
 #define MSM_DT_MAX_PROP_SIZE 80
 
-
-#if defined CONFIG_PROJECT_GARLIC
-#define CAMERA_SELFIE_STICK
-#endif
-
-
 enum btsco_rates {
 	RATE_8KHZ_ID,
 	RATE_16KHZ_ID,
@@ -331,25 +325,7 @@ int is_ext_spk_gpio_support(struct platform_device *pdev,
 
 	return 0;
 }
-#ifdef CONFIG_PROJECT_P7601 
-extern unsigned char AW87319_Audio_Speaker(void);
-extern unsigned char AW87319_Audio_OFF(void);
 
-static int enable_spk_ext_pa(struct snd_soc_codec *codec, int enable)
-{
-	pr_debug("%s: %s external speaker PA\n", __func__,
-			enable ? "Enable" : "Disable");
-	if(enable)
-	{
-		AW87319_Audio_Speaker();
-	}
-	else
-	{
-		AW87319_Audio_OFF();
-	}
-	return 0;
-}
-#else
 static int enable_spk_ext_pa(struct snd_soc_codec *codec, int enable)
 {
 	struct snd_soc_card *card = codec->component.card;
@@ -466,7 +442,7 @@ static int enable_spk_ext_pa(struct snd_soc_codec *codec, int enable)
 err:
 	return 0;
 }
-#endif
+
 /* Validate whether US EU switch is present or not */
 int is_us_eu_switch_gpio_support(struct platform_device *pdev,
 		struct msm8916_asoc_mach_data *pdata)
@@ -1686,15 +1662,8 @@ static void *def_msm8952_wcd_mbhc_cal(void)
 				WCD_MBHC_DEF_RLOADS), GFP_KERNEL);
 	if (!msm8952_wcd_cal)
 		return NULL;
-//++ camera selfie stick TN:peter
-#ifdef  CAMERA_SELFIE_STICK	
-#define S(X, Y) ((WCD_MBHC_CAL_PLUG_TYPE_PTR(msm8952_wcd_cal)->X) = (Y))
-	S(v_hs_max, 1700);
-#else
 #define S(X, Y) ((WCD_MBHC_CAL_PLUG_TYPE_PTR(msm8952_wcd_cal)->X) = (Y))
 	S(v_hs_max, 1500);
-#endif
-//-- camera selfie stick
 #undef S
 #define S(X, Y) ((WCD_MBHC_CAL_BTN_DET_PTR(msm8952_wcd_cal)->X) = (Y))
 	S(num_btn, WCD_MBHC_DEF_BUTTONS);
@@ -1728,7 +1697,6 @@ static void *def_msm8952_wcd_mbhc_cal(void)
 	btn_low[4] = 200;
 	btn_high[4] = 700;
 
-	//yangliang mask and add for garlic linear hph20160729
 	#if defined(CONFIG_PROJECT_GARLIC)
  	btn_low[0] = 100;
 	btn_high[0] = 100;

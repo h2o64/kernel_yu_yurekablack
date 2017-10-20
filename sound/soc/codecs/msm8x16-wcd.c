@@ -5954,7 +5954,7 @@ static int msm8x16_wcd_codec_probe(struct snd_soc_codec *codec)
 
 	wcd_mbhc_init(&msm8x16_wcd_priv->mbhc, codec, &mbhc_cb, &intr_ids,
 		      wcd_mbhc_registers, true);
-        #ifdef CONFIG_SWITCH //yangliang add for ftm hph detect20150830
+  #ifdef CONFIG_SWITCH
 	ret = switch_dev_register(&wcd_mbhc_headset_switch);
 	if (ret < 0) {
 		dev_err(codec->dev, "not able to register switch device h2w\n");
@@ -5963,7 +5963,7 @@ static int msm8x16_wcd_codec_probe(struct snd_soc_codec *codec)
 	if (ret < 0) {
 		dev_err(codec->dev, "not able to register switch device linebtn\n");
 	}
-        #endif
+	#endif
 	msm8x16_wcd_priv->mclk_enabled = false;
 	msm8x16_wcd_priv->clock_active = false;
 	msm8x16_wcd_priv->config_mode_active = false;
@@ -6004,10 +6004,10 @@ static int msm8x16_wcd_codec_remove(struct snd_soc_codec *codec)
 	msm8x16_wcd_priv->on_demand_list[ON_DEMAND_MICBIAS].supply = NULL;
 	atomic_set(&msm8x16_wcd_priv->on_demand_list[ON_DEMAND_MICBIAS].ref, 0);
 	iounmap(msm8x16_wcd->dig_base);
-        #ifdef CONFIG_SWITCH//yangliang add for ftm hph detect20150830
-        switch_dev_unregister(&wcd_mbhc_headset_switch);
-        switch_dev_unregister(&wcd_mbhc_button_switch);
-        #endif
+	#ifdef CONFIG_SWITCH
+ 	switch_dev_unregister(&wcd_mbhc_headset_switch);
+	switch_dev_unregister(&wcd_mbhc_button_switch);
+	#endif
 	kfree(msm8x16_wcd_priv->fw_data);
 	kfree(msm8x16_wcd_priv);
 
