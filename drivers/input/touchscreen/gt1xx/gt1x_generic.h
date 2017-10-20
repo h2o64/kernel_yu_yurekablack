@@ -12,8 +12,8 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
- * Version: 1.4   
+ *
+ * Version: 1.4
  * Release Date:  2015/07/10
  */
 
@@ -59,7 +59,7 @@
 #define GTP_WARP_Y_ON         0
 
 #define GTP_GESTURE_WAKEUP    0	// gesture wakeup module
-/* buffer used to store ges track points coor. */    
+/* buffer used to store ges track points coor. */
 #define GES_BUFFER_ADDR       0xA2A0    // GT1151
 //#define GES_BUFFER_ADDR       0x8A40    // GT9L
 //#define GES_BUFFER_ADDR       0x9734     // GT1152
@@ -98,7 +98,7 @@
 #define GTP_PINCTRL			  1 //yixuhong 20160905 add gtp pinctrl
 
 /***************************PART2:TODO define**********************************/
-/* Normal Configs 
+/* Normal Configs
  *  TODO: puts the config info corresponded to your TP here, the following is just
  *         a sample config, send this config should cause the chip cannot work normally
  */
@@ -141,7 +141,7 @@
     }
 
 /*
-  *         Charger Configs 
+  *         Charger Configs
 */
 /* TODO define your config for Sensor_ID == 0 here, if needed */
 #define GTP_CHARGER_CFG_GROUP0 {\
@@ -187,7 +187,7 @@
 }
 
 /*
-  *         Smart Cover Configs 
+  *         Smart Cover Configs
 */
 /* TODO define your config for Sendor_ID == 0 here, if needed */
 #define GTP_SMART_COVER_CFG_GROUP0 {\
@@ -468,7 +468,7 @@ struct fw_update_info {
 	int status;
 	int progress;
 	int max_progress;
-    int force_update;
+	int force_update;
 	struct fw_info *firmware;
 	u32 fw_length;
 

@@ -43,13 +43,13 @@ static struct platform_driver fp_driver = {
 	.probe = fp_probe,
 	.remove = fp_remove,
 	.driver = {
-		   .name = "fp_drv",
+		.name = "fp_drv",
 	},
 };
 
 struct platform_device fp_device = {
-    .name   	= "fp_drv",
-    .id        	= -1,
+	.name   	= "fp_drv",
+	.id        	= -1,
 };
 
 
@@ -70,16 +70,15 @@ static DECLARE_WAIT_QUEUE_HEAD(waiter);
 int full_fp_chip_name(const char *name)
 {
 	__FUN();
-	
-	if((name == NULL) || (has_exist == 1))
-	{
+
+	if((name == NULL) || (has_exist == 1)) {
 		klog("----(name == NULL) || (has_exist == 1)--err!---\n");
 		return -1;
 	}
-	
+
 	memset(m_dev_name, 0, sizeof(m_dev_name));
 	strcpy(m_dev_name, name);
-	has_exist = 1;	
+	has_exist = 1;
 	klog("---has_exist---:[%s]\n",  m_dev_name);
 	return 0;
 }
@@ -88,42 +87,39 @@ int full_fp_chip_info(const char *info)
 {
 	__FUN();
 
-	if((info == NULL) || (all_info_exist == 1))
-	{
+	if((info == NULL) || (all_info_exist == 1)) {
 		klog("----(info == NULL) || (all_info_exist == 1)--err!---\n");
 		return -1;
 	}
 
 	memset(m_dev_info, 0, sizeof(m_dev_info));
 	strcpy(m_dev_info, info);
-	all_info_exist = 1;	
+	all_info_exist = 1;
 	klog("---m_dev_info---:[%s]\n",  m_dev_info);
 	return 0;
 }
 
 static ssize_t info_show(struct device *dev, struct device_attribute *attr, char *buf)
 {
-	if(has_exist) 
-	{
-		return sprintf(buf, "%s", m_dev_name);    
+	if(has_exist) {
+		return sprintf(buf, "%s", m_dev_name);
 	}
-	return sprintf(buf, "%s", "unknow"); 
+	return sprintf(buf, "%s", "unknow");
 }
 
 static ssize_t all_info_show(struct device *dev, struct device_attribute *attr, char *buf)
 {
-	if(all_info_exist) 
-	{
-		return sprintf(buf, "%s", m_dev_info);    
+	if(all_info_exist) {
+		return sprintf(buf, "%s", m_dev_info);
 	}
-	return sprintf(buf, "%s", "unknow");   
+	return sprintf(buf, "%s", "unknow");
 }
 
 static DEVICE_ATTR(fp_drv_info, 0444, info_show, NULL);
 static DEVICE_ATTR(fp_drv_all_info, 0444, all_info_show, NULL);
 
 static int fp_probe(struct platform_device *pdev)
-{	
+{
 	__FUN();
 
 	device_create_file(&pdev->dev, &dev_attr_fp_drv_info);
@@ -146,14 +142,14 @@ static int __init fp_drv_init(void)
 	if (platform_device_register(&fp_device) != 0) {
 		klog( "device_register fail!.\n");
 		return -1;
-	
+
 	}
-	
+
 	if (platform_driver_register(&fp_driver) != 0) {
 		klog( "driver_register fail!.\n");
 		return -1;
 	}
-	
+
 	return 0;
 }
 

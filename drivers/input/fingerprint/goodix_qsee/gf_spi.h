@@ -4,7 +4,7 @@
 #include <linux/types.h>
 #include <linux/notifier.h>
 /**********************************************************/
-enum FP_MODE{
+enum FP_MODE {
 	GF_IMAGE_MODE = 0,
 	GF_KEY_MODE,
 	GF_SLEEP_MODE,
@@ -18,10 +18,9 @@ struct gf_key {
 };
 
 
-struct gf_key_map
-{
-    char *name;
-    unsigned short val;
+struct gf_key_map {
+	char *name;
+	unsigned short val;
 };
 
 #define  GF_IOC_MAGIC         'g'
@@ -51,7 +50,7 @@ struct gf_key_map
 #define  USE_SPI_BUS	1
 #define GF_FASYNC   1	/*If support fasync mechanism.*/
 #define GF_NET_EVENT_IRQ 0
-//#define GF_NETLINK_ENABLE 
+//#define GF_NETLINK_ENABLE
 #define GF_NET_EVENT_FB_BLACK 1
 #define GF_NET_EVENT_FB_UNBLACK 2
 
@@ -83,9 +82,9 @@ struct gf_dev {
 	char device_available;
 	char fb_black;
 	//TINNO BEGIN
-       u8           isPowerOn;
-       struct regulator *vdd;
-       struct regulator *vio;
+	u8           isPowerOn;
+	struct regulator *vdd;
+	struct regulator *vio;
 	//signed fpid_gpio;
 	//TINNO END
 };
